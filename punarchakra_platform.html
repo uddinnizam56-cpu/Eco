@@ -1,0 +1,2912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PunarChakra (ಪುನಃಚಕ್ರ) — Smart Waste & Scrap Recycling Platform</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: inline-flex;
+      animation: marquee 26s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+    .whatsapp-pulse {
+      box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+      animation: wa-pulse 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+    @keyframes wa-pulse {
+      to {
+        box-shadow: 0 0 0 16px rgba(37, 211, 102, 0);
+      }
+    }
+    @keyframes scan-laser {
+      0% { top: 5%; opacity: 0.8; }
+      50% { top: 90%; opacity: 1; }
+      100% { top: 5%; opacity: 0.8; }
+    }
+    .laser-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
+      box-shadow: 0 0 15px #10b981, 0 0 30px #34d399;
+      animation: scan-laser 2s ease-in-out infinite;
+    }
+    @keyframes soundwave {
+      0%, 100% { height: 6px; }
+      50% { height: 28px; }
+    }
+    .wave-bar {
+      display: inline-block;
+      width: 4px;
+      background-color: #f59e0b;
+      border-radius: 9999px;
+      animation: soundwave 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+    .wave-bar:nth-child(6) { animation-delay: 0.75s; }
+    .wave-bar:nth-child(7) { animation-delay: 0.9s; }
+  </style>
+</head>
+<script>
+  // Global selected role
+  let selectedRole = '';
+  function performRoleLogin(role) {
+    selectedRole = role;
+    // Open login modal for credentials
+    document.getElementById('modal-login').classList.remove('hidden');
+  }
+  function submitLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    if (!email || !password) {
+      alert('Please enter email and password');
+      return;
+    }
+    // Mock user profile data (in real app, authenticate via backend)
+    const user = {
+      role: selectedRole,
+      email: email,
+      name: email.split('@')[0],
+      points: 0,
+      avatar: 'media_1794697927287_13d13a7a.jpg' // using uploaded logo as placeholder avatar
+    };
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    closeModal('modal-login');
+    // Redirect to profile page
+    window.location.href = 'profile.html';
+  }
+  function closeLoginGateway() {
+    closeModal('modal-login-gateway');
+  }
+</script>
+<body class="bg-[#0b1712] text-slate-100 font-sans antialiased min-h-screen flex flex-col relative">
+
+  <!-- ========================================================================= -->
+  <!-- 1. LIVE MARKET SURGE MARQUEE -->
+  <!-- ========================================================================= -->
+  <div class="bg-emerald-950/90 border-b border-emerald-800/60 py-1.5 px-4 overflow-hidden text-xs text-emerald-200">
+    <div class="whitespace-nowrap flex animate-marquee">
+      <span class="inline-flex items-center gap-1.5 mx-4 font-bold text-emerald-400">
+        🔥 <span id="m-ticker-title">TODAY'S HIGHEST ONLINE SCRAP RATES:</span>
+      </span>
+      <span class="inline-flex items-center gap-1 mx-3">📰 <span id="m-ticker-news">Newspaper</span>: <b class="text-white" id="tk-newspaper">₹22/kg</b> <span class="text-emerald-400 text-[10px]" id="tk-newspaper-diff">▲ +₹2</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">⚡ <span id="m-ticker-copper">Heavy Copper Wire</span>: <b class="text-white" id="tk-copper">₹720/kg</b> <span class="text-emerald-400 text-[10px]" id="tk-copper-diff">▲ +₹20 (Surge!)</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">📦 <span id="m-ticker-cardboard">Corrugated Boxes</span>: <b class="text-white" id="tk-cardboard">₹16/kg</b> <span class="text-emerald-400 text-[10px]" id="tk-cardboard-diff">▲ +₹1.5</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">🥤 <span id="m-ticker-pet">PET Bottles</span>: <b class="text-white" id="tk-pet">₹28/kg</b> <span class="text-emerald-400 text-[10px]" id="tk-pet-diff">▲ +₹3</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">⚙️ <span id="m-ticker-brass">Brass Utensils</span>: <b class="text-white" id="tk-brass">₹490/kg</b> <span class="text-emerald-400 text-[10px]" id="tk-brass-diff">▲ +₹15</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">💻 <span id="m-ticker-laptop">Dead Laptops</span>: <b class="text-white" id="tk-laptop">₹350/pc</b> <span class="text-emerald-400 text-[10px]" id="tk-laptop-diff">▲ +₹50</span></span>
+      <!-- Duplicate Loop -->
+      <span class="inline-flex items-center gap-1.5 mx-4 font-bold text-emerald-400">
+        🔥 <span>TODAY'S HIGHEST ONLINE SCRAP RATES:</span>
+      </span>
+      <span class="inline-flex items-center gap-1 mx-3">📰 Newspaper: <b class="text-white">₹22/kg</b> <span class="text-emerald-400 text-[10px]">▲ +₹2</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">⚡ Heavy Copper Wire: <b class="text-white">₹720/kg</b> <span class="text-emerald-400 text-[10px]">▲ +₹20 (Surge!)</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">📦 Corrugated Boxes: <b class="text-white">₹16/kg</b> <span class="text-emerald-400 text-[10px]">▲ +₹1.5</span></span>
+      <span class="inline-flex items-center gap-1 mx-3">🥤 PET Bottles: <b class="text-white">₹28/kg</b> <span class="text-emerald-400 text-[10px]">▲ +₹3</span></span>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN HEADER NAVIGATION BAR WITH ATTACHED OFFICIAL LOGO -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-[#0f241c]/95 backdrop-blur-md border-b border-emerald-800/50 px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo (Official Attached Logo) -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="openLoginGateway()" title="PunarChakra Official Logo">
+        <div class="relative group">
+          <img src="media_1794697927287_13d13a7a.jpg" alt="PunarChakra Official Logo" 
+            class="h-11 sm:h-13 w-auto object-contain rounded-xl bg-white p-1 shadow-md border border-emerald-400/40 transition-transform group-hover:scale-105"
+            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%2310b981\'/><text x=\'50\' y=\'58\' font-size=\'36\' fill=\'white\' text-anchor=\'middle\' font-family=\'sans-serif\'>♻️</text></svg>';">
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-black tracking-tight text-white font-display">PunarChakra</h1>
+            <span class="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+              ಪುನಃಚಕ್ರ
+            </span>
+          </div>
+          <p id="nav-subtitle" class="text-[11px] font-medium text-emerald-400/80">
+            Giving Waste a New Life • ತ್ಯಾಜ್ಯಕ್ಕೆ ಹೊಸ ಜೀವನ
+          </p>
+        </div>
+      </div>
+
+      <!-- Center: Active Portal Switcher -->
+      <div class="hidden">
+        <button onclick="setPortalView('customer')" id="tab-nav-customer" class="portal-nav-btn px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow transition-all">
+          👤 <span id="btn-portal-cust">Individuals</span>
+        </button>
+        <button onclick="setPortalView('business')" id="tab-nav-business" class="portal-nav-btn px-3 py-1.5 rounded-lg text-emerald-300 hover:text-white transition-all">
+          🏢 <span id="btn-portal-biz">B2B Enterprise</span>
+        </button>
+        <button onclick="setPortalView('executive')" id="tab-nav-executive" class="portal-nav-btn px-3 py-1.5 rounded-lg text-emerald-300 hover:text-white transition-all">
+          🛺 <span id="btn-portal-exec">Certified Collector</span>
+        </button>
+        <button onclick="setPortalView('admin')" id="tab-nav-admin" class="portal-nav-btn px-3 py-1.5 rounded-lg text-emerald-300 hover:text-white transition-all">
+          🛡️ <span id="btn-portal-adm">Admin Console</span>
+        </button>
+      </div>
+
+      <!-- Right Actions: Google Drive Status + Rates Sync + Language Toggle -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Google Drive Cloud Backup Indicator & Quick Save Button -->
+        <button onclick="openDriveBackupModal()" id="btn-header-drive" 
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-blue-950/70 hover:bg-blue-900/80 text-blue-200 border border-blue-500/40 text-xs font-bold transition-all shadow-sm hidden"
+          title="Google Drive Cloud Hub: Save all records directly to 'PunarChakra-Backups'">
+          <span class="text-sm">☁️</span>
+          <span class="hidden sm:inline">Drive:</span>
+          <span id="header-drive-status" class="text-emerald-400 font-mono text-[11px]">Synced</span>
+        </button>
+
+        <!-- Daily Online Sync Indicator & Button -->
+        <div class="hidden"
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="header-sync-label" class="text-[11px] font-bold text-emerald-300">Online Mandi: Synced Today 09:00 AM</span>
+          <button onclick="syncOnlineRates()" class="ml-1 text-[10px] font-black px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center gap-1" title="Synchronize latest live commodity scrap rates everyday">
+            <span id="sync-icon">🔄</span>
+            <span>Sync</span>
+          </button>
+        </div>
+
+        <!-- 1-Click English to Kannada Language Toggle -->
+        <button onclick="toggleLanguage()" id="btn-lang-toggle" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-emerald-600/30 to-teal-500/20 hover:from-emerald-500 hover:to-teal-500 text-amber-300 hover:text-slate-950 font-black text-xs border border-amber-400/40 shadow-sm transition-all transform hover:scale-105 active:scale-95"
+          title="Click to toggle language between English & Kannada">
+          <span>🌐</span>
+          <span id="lang-toggle-text">🇮🇳 ಕನ್ನಡ (Kannada)</span>
+        </button>
+
+        <!-- Login / Switch Portal Button -->
+        <button onclick="openLoginGateway()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all">
+          <span>🔑</span>
+          <span id="btn-switch-portal">Switch Portal</span>
+        </button>
+
+        <!-- Cart Quick Access -->
+        <button onclick="openBookingModal()" class="relative px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md flex items-center gap-1.5">
+          <span>📅</span>
+          <span class="hidden sm:inline" id="btn-nav-book">Book Pickup</span>
+          <span id="cart-badge" class="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">2</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Portal Sub-bar -->
+  <div class="lg:hidden flex hidden bg-[#091510] p-1 border-b border-emerald-900 text-xs font-bold overflow-x-auto justify-around">
+    <button onclick="setPortalView('customer')" id="tab-nav-customer-m" class="px-2.5 py-1 text-emerald-400 border-b-2 border-emerald-400">👤 Individuals</button>
+    <button onclick="setPortalView('business')" id="tab-nav-business-m" class="px-2.5 py-1 text-slate-400">🏢 B2B</button>
+    <button onclick="setPortalView('executive')" id="tab-nav-executive-m" class="px-2.5 py-1 text-slate-400">🛺 Collector</button>
+    <button onclick="setPortalView('admin')" id="tab-nav-admin-m" class="px-2.5 py-1 text-slate-400">🛡️ Admin</button>
+  </div>
+
+  <!-- Cloud Drive Auto-Save Notification Toast -->
+  <div id="drive-toast" class="fixed bottom-6 left-6 z-50 bg-blue-950/95 border border-blue-400/50 text-blue-200 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs hidden transition-all duration-300 transform translate-y-4">
+    <span class="text-xl">☁️</span>
+    <div>
+      <div class="font-bold text-white flex items-center gap-2">
+        <span>Google Drive Cloud Sync</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+      </div>
+      <p id="drive-toast-msg" class="text-[11px] text-blue-300">Auto-saved latest changes to 'PunarChakra-Backups' folder.</p>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN WORKSPACE CONTAINER -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-8">
+    <!-- Custom Layout: About Us, Services, Learning (Bengaluru focus) -->
+    <section class="bg-emerald-950/70 rounded-2xl p-6 shadow-xl border border-emerald-800/40">
+      <h2 class="text-2xl font-bold text-emerald-300 mb-4 flex items-center">📖 About Us</h2>
+      <p class="text-slate-200 leading-relaxed">
+        <strong>PunarChakra (ಪುನಃಚಕ್ರ)</strong> is a technology‑driven circular‑waste platform based in the heart of Bengaluru, Karnataka. We connect households, businesses, and certified scrap collectors to turn everyday waste – newspapers 📰, electronics 💻, metals ⚙️, plastics 🥤, and more – into valuable resources, ensuring nothing ends up in landfills.
+      </p>
+      <p class="text-slate-200 mt-2">
+        Our Bengaluru‑centered operations leverage smart IoT‑enabled collection points, real‑time market rates, and AI‑powered classification to provide transparent, instant payouts and measurable carbon‑offset impact for the city’s thriving green community.
+      </p>
+    </section>
+
+    <section class="bg-emerald-900/70 rounded-2xl p-6 shadow-xl border border-emerald-800/40 mt-8">
+      <h2 class="text-2xl font-bold text-emerald-300 mb-4 flex items-center">🛠️ Our Services (Bengaluru)</h2>
+      <ul class="list-disc list-inside text-slate-200 space-y-2">
+        <li><strong>Doorstep Pickup Scheduling</strong> – Book a collection via our app; our fleet of Bengaluru‑based collectors arrives at your door within 24 hrs.</li>
+        <li><strong>AI Scrap Classification</strong> – Snap a photo; Gemini Vision instantly identifies material, purity, and market value.</li>
+        <li><strong>Voice‑Assistant Booking</strong> – Use natural language (English, ಕನ್ನಡ, हिन्दी) to arrange pickups hands‑free.</li>
+        <li><strong>Eco‑Living Quiz & Guidance</strong> – Interactive quizzes and personalized recycling tips to boost household sustainability.</li>
+        <li><strong>Analytics & Ledger Backup</strong> – All pickup data, AI insights, and user activity are saved securely to your Google Drive folder <code>PunarChakra‑Backups</code> for audit and reporting.</li>
+      </ul>
+    </section>
+
+    <section class="bg-emerald-950/70 rounded-2xl p-6 shadow-xl border border-emerald-800/40 mt-8">
+      <h2 class="text-2xl font-bold text-emerald-300 mb-4 flex items-center">📚 Learning Hub – Bengaluru Green Community</h2>
+      <p class="text-slate-200">
+        Join our weekly webinars, local workshops, and school outreach programs hosted across Bengaluru. Learn how to segregate waste, maximize recycling rewards, and contribute to the city's ambitious zero‑waste targets.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div class="bg-emerald-800/30 p-4 rounded-lg border border-emerald-700">
+          <h3 class="font-semibold text-emerald-200 mb-2">🌱 Recycling 101</h3>
+          <p class="text-slate-200 text-sm">Basics of material separation, common pitfalls, and how to prepare items for collection.</p>
+        </div>
+        <div class="bg-emerald-800/30 p-4 rounded-lg border border-emerald-700">
+          <h3 class="font-semibold text-emerald-200 mb-2">💡 AI‑Driven Waste Audits</h3>
+          <p class="text-slate-200 text-sm">Use our Gemini‑powered camera to audit your household waste and track carbon‑offset metrics.</p>
+        </div>
+      </div>
+    </section>
+    <!-- End Custom Layout -->
+
+    <!-- ========================================================================= -->
+    <!-- PORTAL 1: INDIVIDUALS RESIDENTIAL PORTAL -->
+    <!-- ========================================================================= -->
+    <div id="portal-customer" class="portal-pane space-y-8">
+      
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#123124] via-[#0d2118] to-[#07130e] border border-emerald-700/40 p-6 sm:p-10 shadow-2xl">
+        <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-3xl space-y-4 relative z-10">
+          
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="hero-pill">100% Responsible Recycling • Zero Landfill Commitment</span>
+          </div>
+
+          <h2 id="hero-title" class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight font-display">
+            Doorstep Scrap Pickup with <span class="text-emerald-400">Verified Electronic Weighing</span> & Instant UPI Payout.
+          </h2>
+
+          <p id="hero-desc" class="text-slate-300 text-xs sm:text-base leading-relaxed">
+            Sell your old newspapers 📰, electronics 💻, copper & brass metals ⚙️, plastics 🥤, or appliances. 
+            Verified collectors arrive at your chosen time slot with certified digital scales.
+          </p>
+
+          <!-- Action Buttons Bar -->
+          <div class="pt-2 flex flex-wrap items-center gap-3">
+            <button onclick="openBookingModal()" class="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2">
+              <span>📅</span>
+              <span id="hero-btn-schedule">Schedule Doorstep Pickup</span>
+            </button>
+
+            <!-- Gemini AI Vision Scrap Camera -->
+            <button onclick="openAiModal()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm border border-emerald-400/40 shadow-md backdrop-blur-md transition-all flex items-center gap-2">
+              <span class="text-base">📸</span>
+              <span id="hero-btn-ai">Gemini AI Scrap Camera</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] bg-white/20 text-emerald-100 font-mono">Vision</span>
+            </button>
+
+            <!-- Multilingual Voice Assistant -->
+            <button onclick="openVoiceModal()" class="px-4 py-2.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs sm:text-sm border border-amber-400/30 backdrop-blur-md transition-all flex items-center gap-2">
+              <span class="text-base">🎙️</span>
+              <span id="hero-btn-voice">Voice Assistant</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] bg-amber-400/20 text-amber-200">ಕನ್ನಡ / EN</span>
+            </button>
+
+            <!-- Gemini Prep Advisor -->
+            <button onclick="openAiPrepModal()" class="px-3.5 py-2.5 rounded-2xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-bold text-xs sm:text-sm border border-sky-400/30 transition-all flex items-center gap-1.5">
+              <span>💡</span>
+              <span id="hero-btn-prep">Prep for +15% Rate</span>
+            </button>
+
+            <!-- AI Eco Quiz Challenge -->
+            <button onclick="openEcoQuizModal()" class="px-3.5 py-2.5 rounded-2xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-xs sm:text-sm border border-purple-400/30 transition-all flex items-center gap-1.5">
+              <span>🧠</span>
+              <span id="hero-btn-quiz">Eco-Quiz (+100 Coins)</span>
+            </button>
+
+            <!-- Google Drive Quick Sync -->
+            <button onclick="triggerDirectDriveBackup()" class="px-3.5 py-2.5 rounded-2xl bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 font-bold text-xs sm:text-sm border border-blue-400/30 transition-all flex items-center gap-1.5">
+              <span>☁️</span>
+              <span>Save Ledger to Drive</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Platform Metrics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-[#0f241c] border border-emerald-800/40 rounded-2xl p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-xl text-emerald-400">🚚</div>
+          <div>
+            <div class="text-lg font-black text-white">0 ₹</div>
+            <div id="stat-free" class="text-xs text-slate-400">Free Doorstep Pickup</div>
+          </div>
+        </div>
+        <div class="bg-[#0f241c] border border-emerald-800/40 rounded-2xl p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-xl text-emerald-400">⚖️</div>
+          <div>
+            <div class="text-lg font-black text-white">100%</div>
+            <div id="stat-iot" class="text-xs text-slate-400">Certified Digital Scales</div>
+          </div>
+        </div>
+        <div class="bg-[#0f241c] border border-emerald-800/40 rounded-2xl p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-xl text-emerald-400">🌱</div>
+          <div>
+            <div class="text-lg font-black text-white">2.4 MT</div>
+            <div id="stat-vol" class="text-xs text-slate-400">Recycled Responsibly</div>
+          </div>
+        </div>
+        <div class="bg-[#0f241c] border border-emerald-800/40 rounded-2xl p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-xl text-emerald-400">⚡</div>
+          <div>
+            <div class="text-lg font-black text-white">Instant</div>
+            <div id="stat-upi" class="text-xs text-slate-400">UPI / Cash On The Spot</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE DISPATCHED PICKUP STATUS CARD -->
+      <div class="bg-gradient-to-r from-emerald-950/70 via-[#10291e] to-slate-900 border border-emerald-500/40 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-2xl text-emerald-400 shrink-0">
+            🛺
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="active-pickup-tag" class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                ● En Route Pickup
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Order #PC-2026-8801</span>
+            </div>
+            <h3 id="active-pickup-title" class="text-base font-bold text-white mt-1">
+              Collector Manjunath Gowda is 6 mins away
+            </h3>
+            <p id="active-pickup-sub" class="text-xs text-slate-300">
+              Vehicle: <span class="font-mono text-emerald-400">KA-01-EV-4820</span> • Indiranagar, Bengaluru • Arrival OTP: <b class="text-amber-400">4820</b>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <button onclick="openGpsModal()" class="flex-1 md:flex-none px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all">
+            <span>📍</span>
+            <span id="btn-track-gps">Track Live on GPS Map</span>
+          </button>
+          <button onclick="toggleWhatsApp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-1 shadow">
+            <span>💬</span>
+            <span>Driver Chat</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrap Categories & Items Catalog -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 id="catalog-title" class="text-xl font-black text-white">Scrap Categories & Live Payout Rates</h3>
+            <p id="catalog-sub" class="text-xs text-slate-400">Transparent market-linked rates guaranteed at your doorstep</p>
+          </div>
+          <input type="text" id="scrap-search" oninput="filterScrapItems()" placeholder="Search scrap (e.g. Copper, Newspaper)..." 
+            class="w-full sm:w-64 bg-[#091510] border border-emerald-800/60 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <!-- Filter Category Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold">
+          <button onclick="setCategoryFilter('all')" class="cat-pill px-3.5 py-1.5 rounded-full bg-emerald-600 text-white shadow" id="pill-all">All Items</button>
+          <button onclick="setCategoryFilter('Paper')" class="cat-pill px-3.5 py-1.5 rounded-full bg-[#132c21] text-emerald-300" id="pill-paper">📰 Paper</button>
+          <button onclick="setCategoryFilter('Metals')" class="cat-pill px-3.5 py-1.5 rounded-full bg-[#132c21] text-emerald-300" id="pill-metals">⚙️ Metals</button>
+          <button onclick="setCategoryFilter('Plastics')" class="cat-pill px-3.5 py-1.5 rounded-full bg-[#132c21] text-emerald-300" id="pill-plastics">🥤 Plastics</button>
+          <button onclick="setCategoryFilter('E-Waste')" class="cat-pill px-3.5 py-1.5 rounded-full bg-[#132c21] text-emerald-300" id="pill-ewaste">💻 E-Waste</button>
+        </div>
+
+        <!-- Dynamic Scrap Cards Grid -->
+        <div id="scrap-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Rendered dynamically by renderScrapCatalog() -->
+        </div>
+      </div>
+
+      <!-- Live Cart Payout Summary -->
+      <div class="bg-gradient-to-r from-emerald-800 to-teal-800 rounded-2xl p-5 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-emerald-500/30">
+        <div>
+          <div id="cart-payout-label" class="text-xs text-emerald-200 font-bold uppercase tracking-wider">Estimated Doorstep Cash / UPI Payout</div>
+          <div class="text-2xl sm:text-3xl font-black text-white">
+            <span id="cart-total-value">₹1,660</span>
+            <span id="cart-total-desc" class="text-xs font-normal text-emerald-200 ml-2">(10 kg Newspaper + 2 kg Copper)</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="triggerDirectDriveBackup()" class="px-4 py-3 rounded-xl bg-blue-600/80 hover:bg-blue-600 text-white font-bold text-xs shadow flex items-center gap-1.5">
+            <span>☁️</span>
+            <span>Save to Drive</span>
+          </button>
+          <button onclick="openBookingModal()" class="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm shadow-lg transition-all transform hover:scale-105">
+            🚀 <span id="cart-btn-confirm">Confirm Pickup Schedule</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PORTAL 2: B2B INDUSTRIAL & CORPORATE ENTERPRISE PORTAL -->
+    <!-- ========================================================================= -->
+    <div id="portal-business" class="portal-pane hidden space-y-8">
+      <div class="bg-gradient-to-r from-amber-950/60 to-[#1b1c11] border border-amber-600/30 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-bold">
+          🏢 <span id="biz-hero-pill">Industrial Scrap & Corporate ESG Compliance</span>
+        </div>
+        <h2 id="biz-hero-title" class="text-3xl sm:text-4xl font-black text-white">
+          Certified Bulk Waste Management for Factories, IT Parks & Warehouses
+        </h2>
+        <p id="biz-hero-desc" class="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+          PunarChakra provides enterprise-grade scrap clearance contracts, ISO-compliant disposal documentation, 
+          Form-6 hazardous manifest reporting, and certified Green Circularity Certificates for ESG reporting.
+        </p>
+        <div class="pt-2 flex flex-wrap gap-3">
+          <button onclick="openB2BAuditModal()" class="px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow-xl">
+            📋 <span id="biz-btn-audit">Request Industrial Waste Audit</span>
+          </button>
+          <button onclick="generateAiEsgReport()" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow flex items-center gap-1.5">
+            <span>✨</span>
+            <span>AI ESG Carbon Audit Report</span>
+          </button>
+          <button onclick="triggerDirectDriveBackup()" class="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow flex items-center gap-1.5">
+            <span>☁️</span>
+            <span>Sync B2B Contracts to Drive</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Enterprise Contracts List -->
+      <div class="bg-[#181a13] border border-amber-700/30 rounded-2xl p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="biz-active-title" class="text-base font-bold text-white">Active Corporate Scrap Accounts & Contracts</h3>
+            <p class="text-xs text-slate-400">Track monthly scrap tonnage, scheduled crane pickups & compliance certificates</p>
+          </div>
+          <button onclick="openB2BAuditModal()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs">
+            + <span id="biz-btn-new-account">New B2B Account</span>
+          </button>
+        </div>
+
+        <div id="b2b-client-table" class="overflow-x-auto">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PORTAL 3: CERTIFIED COLLECTOR / FLEET DRIVER TERMINAL (WITH AI ROUTE OPTIMIZER) -->
+    <!-- ========================================================================= -->
+    <div id="portal-executive" class="portal-pane hidden space-y-8">
+      <div class="bg-gradient-to-r from-sky-950/70 to-[#0e2129] border border-sky-600/30 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold">
+            🛺 <span id="exec-driver-badge">Driver: Manjunath Gowda • KA-01-EV-4820</span>
+          </div>
+          <h2 id="exec-title" class="text-2xl sm:text-3xl font-black text-white">
+            Field Collector Dispatch & Electronic Weighing Terminal
+          </h2>
+          <p id="exec-sub" class="text-xs text-slate-300">
+            Assigned Territory: Indiranagar - Domlur Cluster • Active Scale: Bluetooth Digital Scale #SC-889 • <span class="text-emerald-400 font-bold">4 Verified Stops</span>
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="optimizeCollectorRouteAi()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow flex items-center gap-1.5">
+            <span>✨</span>
+            <span id="btn-route-opt">AI Route Optimizer (-34% Fuel)</span>
+          </button>
+          <button onclick="alert('Digital scale calibrated: 0.00 kg Tare weight set.')" class="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs">
+            ⚖️ <span id="exec-btn-scale">Sync Digital Scale</span>
+          </button>
+          <button onclick="triggerDirectDriveBackup()" class="px-3 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs">
+            ☁️ Save Trips to Drive
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Route Optimization Banner -->
+      <div id="ai-route-banner" class="hidden bg-emerald-950/60 border border-emerald-500/50 rounded-2xl p-4 flex items-center justify-between text-xs text-emerald-200">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">⚡</span>
+          <div>
+            <div class="font-black text-white text-sm">Gemini Fleet Optimization Completed!</div>
+            <p>Waypoints re-sequenced for minimum EV battery usage: <b>Saved 6.2 km (34%) • 45 mins saved • 3.8 kg CO₂ avoided</b>.</p>
+          </div>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-emerald-500 text-slate-950 font-black text-[10px]">Active Optimal Navigation</span>
+      </div>
+
+      <!-- Assigned Pickup Queue -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 id="exec-queue-title" class="text-lg font-bold text-white">Today's Assigned Doorstep Pickup Queue</h3>
+          <span class="text-xs text-sky-400 font-bold" id="exec-stops-badge">4 Stops Remaining</span>
+        </div>
+
+        <div id="collector-stops-container" class="space-y-3">
+          <!-- Stop 1 (Current) -->
+          <div class="bg-[#0f1f26] border border-sky-800/40 rounded-2xl p-5 space-y-4">
+            <div class="flex items-start justify-between flex-wrap gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">● Stop 1 (En Route)</span>
+                  <span class="text-xs text-slate-400">Order #PC-2026-8801</span>
+                </div>
+                <h4 class="text-base font-bold text-white mt-1">Ananya Sharma (Flat 402, Green Glen Layout, Indiranagar)</h4>
+                <p class="text-xs text-slate-400">Phone: +91 98765 43210 • Scheduled: Today, 10:30 AM</p>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">Est. ₹1,660</div>
+                <div class="text-[11px] text-slate-400">Newspaper (10kg) + Copper (2kg)</div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-sky-900/60 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2 text-xs text-slate-300">
+                <span>📍 Distance: <b>0.8 km</b></span>
+                <span>•</span>
+                <span>ETA: <b>6 mins</b></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="openGpsModal()" class="px-3 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600/50 text-sky-200 border border-sky-500/40 text-xs font-bold">
+                  🗺️ <span id="exec-btn-map">GPS Navigation</span>
+                </button>
+                <button onclick="completeOrderPayout('PC-2026-8801', 1682)" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black shadow">
+                  ✅ <span id="exec-btn-weigh">Weigh & Pay UPI (₹1,682)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stop 2 -->
+          <div class="bg-[#0b181e] border border-sky-900/40 rounded-2xl p-4 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-white">Stop 2: Rahul Verma • Domlur 2nd Stage</div>
+              <div class="text-slate-400">PET Bottles (8kg) + Iron Scrap (15kg) • Est. ₹794</div>
+            </div>
+            <span class="text-sky-300 font-mono">1.4 km away</span>
+          </div>
+
+          <!-- Stop 3 -->
+          <div class="bg-[#0b181e] border border-sky-900/40 rounded-2xl p-4 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-white">Stop 3: Priya Hegde • Koramangala 4th Block</div>
+              <div class="text-slate-400">Cardboard Boxes (25kg) + Dead E-Waste Laptop (1pc) • Est. ₹750</div>
+            </div>
+            <span class="text-sky-300 font-mono">3.1 km away</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PORTAL 4: MASTER OPERATIONS ADMIN CONSOLE (FULL ADD, DEL & UPDATE + GOOGLE DRIVE) -->
+    <!-- ========================================================================= -->
+    <div id="portal-admin" class="portal-pane hidden space-y-8">
+      
+      <!-- Admin Header Banner -->
+      <div class="bg-gradient-to-r from-purple-950/80 to-[#1b1029] border border-purple-600/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-bold">
+              🛡️ <span id="adm-pill">Master Operations Console • Full CRUD Access</span>
+            </div>
+            <h2 id="adm-title" class="text-2xl sm:text-3xl font-black text-white mt-2">
+              Add, Delete & Update All Contents Across Individuals, B2B & Collectors
+            </h2>
+            <p id="adm-sub" class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+              Full administrative rights to configure daily online rate sync, manage registered citizens, dispatch collectors, audit enterprise contracts, and manage Google Drive cloud persistence.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openDriveBackupModal()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow flex items-center gap-1.5">
+              <span>☁️</span>
+              <span>Google Drive Hub</span>
+            </button>
+            <button onclick="syncOnlineRates()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow flex items-center gap-1.5">
+              <span>🔄</span>
+              <span>Online Rates Sync</span>
+            </button>
+            <button onclick="exportDataJson()" class="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow flex items-center gap-1.5">
+              <span>📥</span>
+              <span>Download JSON</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Navigation Sub-tabs -->
+        <div class="flex items-center gap-2 overflow-x-auto pt-2 text-xs font-bold border-t border-purple-900/60">
+          <button onclick="setAdminTab('individuals')" id="atab-individuals" class="admin-tab-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white">
+            👤 Individuals Accounts
+          </button>
+          <button onclick="setAdminTab('b2b')" id="atab-b2b" class="admin-tab-btn px-3 py-1.5 rounded-lg text-purple-300 hover:bg-purple-900/40">
+            🏢 B2B Enterprises
+          </button>
+          <button onclick="setAdminTab('collectors')" id="atab-collectors" class="admin-tab-btn px-3 py-1.5 rounded-lg text-purple-300 hover:bg-purple-900/40">
+            🛺 Verified Collectors
+          </button>
+          <button onclick="setAdminTab('rates')" id="atab-rates" class="admin-tab-btn px-3 py-1.5 rounded-lg text-purple-300 hover:bg-purple-900/40">
+            ⚡ Daily Scrap Rates & Catalog
+          </button>
+          <button onclick="setAdminTab('drive')" id="atab-drive" class="admin-tab-btn px-3 py-1.5 rounded-lg text-blue-300 hover:bg-blue-900/40">
+            ☁️ Google Drive & Cloud Backups
+          </button>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 1: INDIVIDUALS MANAGEMENT -->
+      <div id="admin-sec-individuals" class="admin-section space-y-4">
+        <div class="bg-[#150f21] border border-purple-800/40 rounded-2xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h4 class="font-black text-white text-base">Registered Individual Citizens</h4>
+              <p class="text-xs text-slate-400">Add new individuals, update wallet balances & phone, or delete accounts (Auto-saved to Drive)</p>
+            </div>
+            <button onclick="openAddIndividualModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow flex items-center gap-1.5">
+              <span>➕</span>
+              <span>Add New Individual</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-[#0e0a17] text-purple-300 uppercase font-black border-b border-purple-900/60">
+                <tr>
+                  <th class="p-3">Customer ID</th>
+                  <th class="p-3">Full Name</th>
+                  <th class="p-3">Phone</th>
+                  <th class="p-3">Area / City</th>
+                  <th class="p-3">Wallet (₹)</th>
+                  <th class="p-3">Total Sold</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-individuals" class="divide-y divide-purple-950/60">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 2: B2B ENTERPRISES MANAGEMENT -->
+      <div id="admin-sec-b2b" class="admin-section hidden space-y-4">
+        <div class="bg-[#150f21] border border-purple-800/40 rounded-2xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h4 class="font-black text-white text-base">Industrial & B2B Corporate Clients</h4>
+              <p class="text-xs text-slate-400">Add corporate accounts, update monthly quotas & contracts, or remove clients (Auto-saved to Drive)</p>
+            </div>
+            <button onclick="openAddB2BModal()" class="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow flex items-center gap-1.5">
+              <span>➕</span>
+              <span>Add B2B Enterprise</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-[#0e0a17] text-amber-300 uppercase font-black border-b border-purple-900/60">
+                <tr>
+                  <th class="p-3">Company Name</th>
+                  <th class="p-3">GSTIN</th>
+                  <th class="p-3">Contact Email</th>
+                  <th class="p-3">Monthly Volume</th>
+                  <th class="p-3">Contract Tier</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-b2b" class="divide-y divide-purple-950/60">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 3: CERTIFIED COLLECTORS MANAGEMENT -->
+      <div id="admin-sec-collectors" class="admin-section hidden space-y-4">
+        <div class="bg-[#150f21] border border-purple-800/40 rounded-2xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h4 class="font-black text-white text-base">Verified Field Scrap Collectors & Fleet</h4>
+              <p class="text-xs text-slate-400">Add new drivers, update EV vehicle numbers & status, or delete collector records</p>
+            </div>
+            <button onclick="openAddCollectorModal()" class="px-3.5 py-1.5 rounded-xl bg-sky-400 hover:bg-sky-300 text-slate-950 font-black text-xs shadow flex items-center gap-1.5">
+              <span>➕</span>
+              <span>Add Verified Collector</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-[#0e0a17] text-sky-300 uppercase font-black border-b border-purple-900/60">
+                <tr>
+                  <th class="p-3">Collector ID</th>
+                  <th class="p-3">Name</th>
+                  <th class="p-3">Phone</th>
+                  <th class="p-3">Vehicle No</th>
+                  <th class="p-3">Territory</th>
+                  <th class="p-3">Rating</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-collectors" class="divide-y divide-purple-950/60">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 4: LIVE SCRAP RATES & DAILY SYNC ENGINE -->
+      <div id="admin-sec-rates" class="admin-section hidden space-y-4">
+        <div class="bg-[#150f21] border border-purple-800/40 rounded-2xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h4 class="font-black text-white text-base">Automated Daily Scrap Rates Engine (MCX & Mandi Sync)</h4>
+              <p class="text-xs text-slate-400">Connected to Indian Commodity Exchanges. Rate sync triggers daily at 09:00 AM IST.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="syncOnlineRates()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow flex items-center gap-1">
+                <span>🔄</span>
+                <span>Trigger Mandi Sync Now</span>
+              </button>
+              <button onclick="openAddScrapItemModal()" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow">
+                + Add Scrap Item
+              </button>
+            </div>
+          </div>
+
+          <div id="admin-rates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 5: GOOGLE DRIVE CLOUD STORAGE & BACKUP MANAGER -->
+      <div id="admin-sec-drive" class="admin-section hidden space-y-4">
+        <div class="bg-[#0b1626] border border-blue-800/50 rounded-2xl p-6 space-y-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-blue-900/60 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">☁️</span>
+                <h4 class="font-black text-white text-lg">Google Drive Enterprise Cloud Synchronization</h4>
+              </div>
+              <p class="text-xs text-blue-300 mt-1">
+                Shared Cloud Directory: <code class="bg-blue-950 px-2 py-0.5 rounded border border-blue-700/60 font-mono text-emerald-400 font-bold">Google Drive / PunarChakra-Backups</code>
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="runGoogleDriveSync()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow flex items-center gap-1.5">
+                <span>⚡</span>
+                <span>Trigger Manual Drive Sync</span>
+              </button>
+              <button onclick="exportAllTablesCsv()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow flex items-center gap-1.5">
+                <span>📊</span>
+                <span>Export Google Sheets CSVs</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Drive Sync Status Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="bg-blue-950/40 p-3.5 rounded-xl border border-blue-900">
+              <span class="text-blue-400 block font-bold mb-1">Google Drive Connection</span>
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-bold text-white">OAuth 2.0 Connected</span>
+              </div>
+              <span class="text-[11px] text-slate-400 block mt-1">Account: ops@punarchakra.in</span>
+            </div>
+            <div class="bg-blue-950/40 p-3.5 rounded-xl border border-blue-900">
+              <span class="text-blue-400 block font-bold mb-1">Auto-Save on Change</span>
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-emerald-400" id="adm-autosave-label">ENABLED</span>
+                <button onclick="toggleAutoSaveDrive()" class="px-2 py-0.5 rounded bg-blue-800 text-white text-[10px] font-bold">Toggle</button>
+              </div>
+              <span class="text-[11px] text-slate-400 block mt-1">Saves snapshot after every CRUD action</span>
+            </div>
+            <div class="bg-blue-950/40 p-3.5 rounded-xl border border-blue-900">
+              <span class="text-blue-400 block font-bold mb-1">Last Drive Backup</span>
+              <div class="font-bold text-white" id="adm-last-drive-time">Today, 09:15 AM IST</div>
+              <span class="text-[11px] text-emerald-300 block mt-1" id="adm-last-drive-size">6 files • 42.8 KB</span>
+            </div>
+          </div>
+
+          <!-- File Explorer in Google Drive Folder -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs font-bold text-blue-200 uppercase tracking-wider">Cloud Files in 'PunarChakra-Backups'</h5>
+              <a href="https://drive.google.com" target="_blank" class="text-xs text-blue-400 hover:text-blue-300 underline flex items-center gap-1">
+                <span>Open Google Drive in Browser</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <div class="overflow-x-auto border border-blue-900/60 rounded-xl">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-[#09121f] text-blue-300 uppercase font-black border-b border-blue-900/60">
+                  <tr>
+                    <th class="p-3">File Name</th>
+                    <th class="p-3">Type</th>
+                    <th class="p-3">Target Folder</th>
+                    <th class="p-3">Last Modified</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="drive-files-tbody" class="divide-y divide-blue-950/60">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- 4. FLOATING INTERACTIVE WHATSAPP LIVE CHAT WIDGET -->
+  <!-- ========================================================================= -->
+  <div id="whatsapp-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <!-- Chat Drawer -->
+    <div id="whatsapp-drawer" class="hidden mb-3 w-80 sm:w-96 bg-[#0c1f17] border border-emerald-600/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all">
+      <!-- Chat Header -->
+      <div class="bg-[#005c4b] p-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">
+              ♻️
+            </div>
+            <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#005c4b]"></span>
+          </div>
+          <div>
+            <h4 class="font-black text-sm">PunarChakra Support</h4>
+            <p class="text-[11px] text-emerald-200">Online • Bengaluru Dispatch Hub</p>
+          </div>
+        </div>
+        <button onclick="toggleWhatsApp()" class="text-white/80 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <!-- Chat Thread -->
+      <div id="wa-chat-thread" class="p-4 space-y-3 h-64 overflow-y-auto text-xs bg-[#091711]">
+        <!-- Welcome Message -->
+        <div class="flex items-start gap-2">
+          <div class="w-7 h-7 rounded-full bg-[#25D366] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            💬
+          </div>
+          <div class="bg-[#122b1f] text-slate-100 p-3 rounded-2xl rounded-tl-xs max-w-[85%] border border-emerald-800/40">
+            <p class="font-bold text-emerald-300 mb-1">ನಮಸ್ಕಾರ / Hello!</p>
+            <p>Welcome to PunarChakra live WhatsApp support. How can we assist your scrap recycling today?</p>
+            <span class="text-[9px] text-emerald-400/80 block mt-1 text-right font-mono">09:00 AM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Inquiry Pills -->
+      <div class="p-2 bg-[#0d2118] border-t border-emerald-900/60 flex items-center gap-1.5 overflow-x-auto text-[11px]">
+        <button onclick="sendQuickWhatsApp('What are today\'s copper scrap rates?')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-900/60 hover:bg-emerald-800 text-emerald-300 font-semibold border border-emerald-700/50">
+          ⚡ Today's Rates
+        </button>
+        <button onclick="sendQuickWhatsApp('When will collector arrive for #PC-2026-8801?')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-900/60 hover:bg-emerald-800 text-emerald-300 font-semibold border border-emerald-700/50">
+          📍 Track #PC-2026-8801
+        </button>
+        <button onclick="sendQuickWhatsApp('I need factory bulk clearance quote')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-900/60 hover:bg-emerald-800 text-emerald-300 font-semibold border border-emerald-700/50">
+          🏢 B2B Bulk Scrap
+        </button>
+      </div>
+
+      <!-- Input Box -->
+      <form onsubmit="handleSendWhatsApp(event)" class="p-3 bg-[#0a1812] border-t border-emerald-900/60 flex items-center gap-2">
+        <input type="text" id="wa-input-msg" placeholder="Type your message in English or ಕನ್ನಡ..." 
+          class="flex-1 bg-[#122b1f] border border-emerald-800/50 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400">
+        <button type="submit" class="w-9 h-9 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center font-bold text-sm shadow">
+          ➤
+        </button>
+      </form>
+    </div>
+
+    <!-- Floating Trigger Button -->
+    <button onclick="toggleWhatsApp()" 
+      class="whatsapp-pulse flex items-center gap-2 px-4 py-3 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-sm shadow-2xl transition-all transform hover:scale-105 active:scale-95"
+      title="Chat with PunarChakra verified coordinators on WhatsApp">
+      <span class="text-xl">💬</span>
+      <span class="hidden sm:inline">WhatsApp Live Chat</span>
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS SECTION -->
+  <!-- ========================================================================= -->
+
+  <!-- MODAL: USER LOGIN -->
+<div id="modal-login" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+  <div class="bg-[#0f241c] border border-emerald-600/50 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl space-y-5">
+    <div class="flex justify-end">
+      <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+    </div>
+    <h3 class="text-xl font-black text-white mb-2">Login</h3>
+    <input id="login-email" type="email" placeholder="Email" class="w-full bg-[#091510] border border-emerald-800/60 rounded-xl px-3 py-2 text-white mb-3" />
+    <input id="login-password" type="password" placeholder="Password" class="w-full bg-[#091510] border border-emerald-800/60 rounded-xl px-3 py-2 text-white mb-3" />
+    <button onclick="submitLogin()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl">Sign In</button>
+  </div>
+</div>
+
+  <div id="modal-login-gateway" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-emerald-600/50 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 text-center">
+      <div class="flex justify-end">
+        <button onclick="closeLoginGateway()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+      </div>
+      
+      <div class="flex justify-center">
+        <img src="media_1794697927287_13d13a7a.jpg" alt="PunarChakra Logo" class="h-16 w-auto rounded-2xl bg-white p-1 shadow-md border border-emerald-400">
+      </div>
+
+      <div>
+        <h3 class="text-xl font-black text-white">Select Your Access Portal</h3>
+        <p class="text-xs text-emerald-300 mt-1">Authenticate into your verified PunarChakra environment</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-2.5 pt-2 text-left text-xs font-bold">
+        <button onclick="performRoleLogin('customer')" class="p-3.5 rounded-2xl bg-[#132c21] hover:bg-emerald-700/40 border border-emerald-700/50 flex items-center justify-between transition-all">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">👤</span>
+            <div>
+              <div class="text-white font-black">Individuals Citizen Recycler</div>
+              <div class="text-[11px] text-slate-400 font-normal">Doorstep pickup, UPI wallet & rates</div>
+            </div>
+          </div>
+          <span class="text-emerald-400 text-sm">➔</span>
+        </button>
+
+        <button onclick="performRoleLogin('business')" class="p-3.5 rounded-2xl bg-[#132c21] hover:bg-amber-700/40 border border-emerald-700/50 flex items-center justify-between transition-all">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🏢</span>
+            <div>
+              <div class="text-white font-black">B2B Industrial & Corporate</div>
+              <div class="text-[11px] text-slate-400 font-normal">Bulk tonnage & ESG certificates</div>
+            </div>
+          </div>
+          <span class="text-amber-400 text-sm">➔</span>
+        </button>
+
+        <button onclick="performRoleLogin('executive')" class="p-3.5 rounded-2xl bg-[#132c21] hover:bg-sky-700/40 border border-emerald-700/50 flex items-center justify-between transition-all">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🛺</span>
+            <div>
+              <div class="text-white font-black">Certified Collector Driver</div>
+              <div class="text-[11px] text-slate-400 font-normal">IoT scale verification & route nav</div>
+            </div>
+          </div>
+          <span class="text-sky-400 text-sm">➔</span>
+        </button>
+
+        <button onclick="performRoleLogin('admin')" class="p-3.5 rounded-2xl bg-[#1e1029] hover:bg-purple-900/60 border border-purple-500/50 flex items-center justify-between transition-all">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🛡️</span>
+            <div>
+              <div class="text-white font-black">Master Operations Admin Console</div>
+              <div class="text-[11px] text-purple-300 font-normal">Full Add, Update & Delete permissions</div>
+            </div>
+          </div>
+          <span class="text-purple-400 text-sm">➔</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GEMINI AI VISION SCRAP CAMERA -->
+  <div id="modal-ai" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-emerald-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-emerald-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">✨</span>
+          <h3 class="font-black text-white text-lg">Gemini AI Scrap Camera & Purity Classifier</h3>
+        </div>
+        <button onclick="closeModal('modal-ai')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <!-- Viewfinder / Test Samples Gallery -->
+      <div class="space-y-3">
+        <div class="text-xs text-slate-300 font-bold">Select test scrap sample or upload photo:</div>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <button onclick="runAiScanWithSample('copper')" class="p-2.5 rounded-xl bg-[#091510] hover:bg-emerald-900/50 border border-emerald-800/60 text-left">
+            <div class="text-lg">⚡</div>
+            <div class="font-bold text-white text-[11px]">Copper Wire</div>
+            <div class="text-[9px] text-emerald-400">Grade A 98%</div>
+          </button>
+          <button onclick="runAiScanWithSample('cardboard')" class="p-2.5 rounded-xl bg-[#091510] hover:bg-emerald-900/50 border border-emerald-800/60 text-left">
+            <div class="text-lg">📦</div>
+            <div class="font-bold text-white text-[11px]">Cardboard</div>
+            <div class="text-[9px] text-amber-400">Kraft Bundles</div>
+          </button>
+          <button onclick="runAiScanWithSample('pet_bottles')" class="p-2.5 rounded-xl bg-[#091510] hover:bg-emerald-900/50 border border-emerald-800/60 text-left">
+            <div class="text-lg">🥤</div>
+            <div class="font-bold text-white text-[11px]">PET Bottles</div>
+            <div class="text-[9px] text-sky-400">Clear Resin</div>
+          </button>
+          <button onclick="runAiScanWithSample('laptop')" class="p-2.5 rounded-xl bg-[#091510] hover:bg-emerald-900/50 border border-emerald-800/60 text-left">
+            <div class="text-lg">💻</div>
+            <div class="font-bold text-white text-[11px]">Laptop PCB</div>
+            <div class="text-[9px] text-purple-400">Gold Contacts</div>
+          </button>
+          <button onclick="runAiScanWithSample('brass')" class="p-2.5 rounded-xl bg-[#091510] hover:bg-emerald-900/50 border border-emerald-800/60 text-left">
+            <div class="text-lg">⚙️</div>
+            <div class="font-bold text-white text-[11px]">Brass Vessels</div>
+            <div class="text-[9px] text-yellow-400">Pooja Metal</div>
+          </button>
+          <button onclick="runAiScanWithSample('aluminum')" class="p-2.5 rounded-xl bg-[#091510] hover:bg-emerald-900/50 border border-emerald-800/60 text-left">
+            <div class="text-lg">🥫</div>
+            <div class="font-bold text-white text-[11px]">Alum Cans</div>
+            <div class="text-[9px] text-emerald-300">Clean Beverage</div>
+          </button>
+        </div>
+
+        <!-- Camera Scanner Viewfinder -->
+        <div id="ai-dropzone" class="relative overflow-hidden border-2 border-dashed border-emerald-500/40 rounded-2xl p-6 text-center space-y-2 bg-[#091510] hover:border-emerald-400 transition-all cursor-pointer" onclick="runAiScanWithSample('copper')">
+          <div id="ai-laser" class="laser-line hidden"></div>
+          <div class="text-4xl" id="ai-scan-icon">📸</div>
+          <div class="text-sm font-bold text-white" id="ai-scan-prompt">Click to scan camera viewfinder</div>
+          <p class="text-xs text-slate-400">Gemini 2.5 Flash Vision evaluates purity, contamination & spot pricing</p>
+        </div>
+
+        <!-- AI Result Breakdown Card -->
+        <div id="ai-result" class="hidden bg-[#132c21] rounded-2xl p-4 border border-emerald-700/50 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-400/30" id="ai-card-conf">
+              98.4% Confidence
+            </span>
+            <span class="text-xs text-slate-300 font-mono">Gemini 2.5 Flash Vision</span>
+          </div>
+          <div>
+            <h4 class="font-black text-white text-base" id="ai-card-name">Stripped Grade-A Copper Wires</h4>
+            <p class="text-xs text-emerald-300" id="ai-card-kn">ಕನ್ನಡ: ಶುದ್ಧ ತಾಮ್ರದ ತಂತಿ • Hindi: उच्च गुणवत्ता तांबा तार</p>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs bg-[#091510] p-3 rounded-xl border border-emerald-900">
+            <div>Estimated Weight: <b class="text-white" id="ai-card-weight">3.5 kg</b></div>
+            <div>Spot Rate: <b class="text-emerald-400" id="ai-card-rate">₹720 / kg</b></div>
+            <div>Estimated Payout: <b class="text-emerald-400 font-black text-sm" id="ai-card-payout">₹2,520</b></div>
+            <div>CO₂ Offset: <b class="text-white" id="ai-card-co2">16.8 kg CO₂</b></div>
+          </div>
+          <!-- AI Prep Tip -->
+          <div class="bg-amber-950/40 border border-amber-500/40 p-2.5 rounded-xl text-[11px] text-amber-200">
+            💡 <b>Gemini High-Payout Tip:</b> <span id="ai-card-tip">Strip outer PVC jacket to unlock +₹80/kg Grade-A bonus rate!</span>
+          </div>
+          <button onclick="addDetectedAiItemToCart()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow flex items-center justify-center gap-1.5">
+            <span>➕</span>
+            <span>Add Detected Item to Pickup Cart</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MULTILINGUAL AI VOICE ASSISTANT -->
+  <div id="modal-voice" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-emerald-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-emerald-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎙️</span>
+          <h3 class="font-black text-white text-lg">Multilingual Voice Pickup Assistant</h3>
+        </div>
+        <button onclick="closeModal('modal-voice')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <div class="text-center py-4 space-y-4">
+        <!-- Animated Voice Bars Waveform -->
+        <div class="h-14 flex items-center justify-center gap-1.5 bg-[#091510] p-3 rounded-2xl border border-emerald-900/60">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+
+        <p class="text-xs text-slate-300 max-w-sm mx-auto">
+          Click a realistic speech input below to test Gemini NLP entity extraction:
+        </p>
+
+        <!-- Sample Voice Queries -->
+        <div class="space-y-2 text-left">
+          <button onclick="simulateVoiceQuery('kn')" class="w-full p-3 rounded-xl bg-[#122b1f] hover:bg-emerald-900/60 border border-emerald-700/50 text-xs text-left transition-all">
+            <span class="font-bold text-amber-300 block mb-0.5">🇮🇳 ಕನ್ನಡ (Kannada):</span>
+            <span class="text-white">"ನನ್ನ ಹಳೆಯ ದಿನಪತ್ರಿಕೆ 15 ಕೆಜಿ ಮತ್ತು ಪ್ಲಾಸ್ಟಿಕ್ ಬಾಟಲಿಗಳು ನಾಳೆ ಬೆಳಿಗ್ಗೆ ತೆಗೆದುಕೊಳ್ಳಲು ಬನ್ನಿ, ಇಂದಿರಾನಗರ"</span>
+          </button>
+          <button onclick="simulateVoiceQuery('en')" class="w-full p-3 rounded-xl bg-[#122b1f] hover:bg-emerald-900/60 border border-emerald-700/50 text-xs text-left transition-all">
+            <span class="font-bold text-emerald-300 block mb-0.5">🇬🇧 English:</span>
+            <span class="text-white">"Collect 20kg cardboard boxes and 4kg copper wires tomorrow morning at Koramangala"</span>
+          </button>
+        </div>
+
+        <!-- NLP Entity Extraction Result -->
+        <div id="voice-nlp-card" class="hidden bg-[#091510] border border-amber-500/40 rounded-2xl p-4 text-left text-xs space-y-2">
+          <div class="font-black text-amber-300 flex items-center gap-1.5">
+            <span>✨</span>
+            <span>Gemini NLP Extracted Entities:</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-slate-300 text-[11px]">
+            <div>Scrap: <b class="text-white" id="voice-res-items">Cardboard 20kg, Copper 4kg</b></div>
+            <div>Area: <b class="text-white" id="voice-res-loc">Koramangala, Bengaluru</b></div>
+            <div>Slot: <b class="text-white" id="voice-res-slot">Tomorrow Morning (9-12 AM)</b></div>
+            <div>Est Payout: <b class="text-emerald-400 font-bold" id="voice-res-payout">₹3,200</b></div>
+          </div>
+          <button onclick="confirmVoiceExtractedBooking()" class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow mt-2">
+            🚀 Confirm Extracted Booking
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GEMINI SCRAP PREPARATION ADVISOR -->
+  <div id="modal-ai-prep" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-emerald-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-emerald-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">💡</span>
+          <h3 class="font-black text-white text-lg">Gemini Scrap Preparation Advisor (+15% Higher Payout)</h3>
+        </div>
+        <button onclick="closeModal('modal-ai-prep')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p class="text-slate-300">
+          Cleaned and pre-sorted scrap fetches top market tier rates at your doorstep. Select a material to view Gemini's preparation checklist:
+        </p>
+
+        <div class="grid grid-cols-4 gap-1.5 font-bold">
+          <button onclick="showPrepDetails('copper')" class="p-2 rounded-lg bg-emerald-600 text-white text-center">⚡ Copper</button>
+          <button onclick="showPrepDetails('paper')" class="p-2 rounded-lg bg-[#091510] text-emerald-300 text-center hover:bg-emerald-900">📰 Paper</button>
+          <button onclick="showPrepDetails('plastic')" class="p-2 rounded-lg bg-[#091510] text-emerald-300 text-center hover:bg-emerald-900">🥤 Plastic</button>
+          <button onclick="showPrepDetails('ewaste')" class="p-2 rounded-lg bg-[#091510] text-emerald-300 text-center hover:bg-emerald-900">💻 E-Waste</button>
+        </div>
+
+        <div id="prep-content-box" class="bg-[#091510] border border-emerald-900/60 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-white text-sm" id="prep-mat-title">Heavy Copper Electrical Wire</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold" id="prep-bonus-tag">+₹80/kg Value Jump</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 bg-[#122b1f] p-2.5 rounded-xl">
+            <div>Unstripped Rate: <span class="text-slate-400 line-through">₹640/kg</span></div>
+            <div>Clean Stripped: <span class="text-emerald-400 font-black">₹720/kg</span></div>
+          </div>
+          <div class="space-y-1.5 text-slate-300" id="prep-steps">
+            <div>1. <b>Strip PVC Sheath</b>: Use a craft knife or stripping plier to expose shiny bare wire.</div>
+            <div>2. <b>Remove Brass Connectors</b>: Separate plugs and solder joints into the brass bucket.</div>
+            <div>3. <b>Bundle in Coils</b>: Twist together in 2kg loops for quick certified digital scale verification.</div>
+          </div>
+        </div>
+
+        <button onclick="closeModal('modal-ai-prep')" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow">
+          Understood! Return to Catalog
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DYNAMIC AI ECO-QUIZ CHALLENGE -->
+  <div id="modal-eco-quiz" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-purple-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-purple-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🧠</span>
+          <h3 class="font-black text-white text-lg">AI Waste Segregation Quiz (+100 Eco-Coins)</h3>
+        </div>
+        <button onclick="closeModal('modal-eco-quiz')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <div id="quiz-body" class="space-y-4 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-purple-300 font-bold" id="quiz-progress">Question 1 of 3</span>
+          <span class="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono font-bold" id="quiz-score">Score: 0</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-[#091510] border border-purple-900/60 space-y-2">
+          <h4 class="font-black text-white text-sm" id="quiz-question">
+            Can greasy pizza delivery boxes with cheese residues be recycled with normal clean cardboard?
+          </h4>
+          <p class="text-[11px] text-slate-400" id="quiz-question-kn">
+            ಕನ್ನಡ: ಎಣ್ಣೆ ಅಂಟಿದ ಪಿಜ್ಜಾ ರಟ್ಟಿನ ಬಾಕ್ಸ್ ಅನ್ನು ಸ್ವಚ್ಛ ರಟ್ಟಿನ ಜೊತೆ ಮರುಬಳಕೆ ಮಾಡಬಹುದೇ?
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2" id="quiz-options">
+          <button onclick="handleQuizAnswer(false, this)" class="p-3 rounded-xl bg-[#141221] hover:bg-purple-900/50 border border-purple-900 text-left text-white font-medium">
+            A) Yes, all paper and cardboard melts the same in paper mills
+          </button>
+          <button onclick="handleQuizAnswer(true, this)" class="p-3 rounded-xl bg-[#141221] hover:bg-purple-900/50 border border-purple-900 text-left text-white font-medium">
+            B) No, oil & grease contaminate the paper fiber slurry; cut off the clean lid only
+          </button>
+        </div>
+
+        <div id="quiz-explanation" class="hidden p-3 rounded-xl bg-purple-950/60 border border-purple-700/60 text-[11px] text-purple-200">
+          <!-- Shown after answer -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GOOGLE DRIVE CLOUD HUB & BACKUP -->
+  <div id="modal-drive" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0b1626] border border-blue-600/50 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-blue-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">☁️</span>
+          <div>
+            <h3 class="font-black text-white text-lg">Google Drive Enterprise Cloud Hub</h3>
+            <p class="text-[11px] text-blue-300">Persistence folder: <b class="text-emerald-400 font-mono">PunarChakra-Backups</b></p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-drive')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <!-- Sync Progress Visualizer -->
+      <div id="drive-sync-progress" class="hidden bg-[#09121f] p-4 rounded-2xl border border-blue-900 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-blue-300" id="drive-progress-title">Uploading to Google Drive...</span>
+          <span class="font-mono text-emerald-400 font-bold" id="drive-progress-pct">45%</span>
+        </div>
+        <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+          <div id="drive-progress-bar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-[45%] transition-all duration-300"></div>
+        </div>
+        <p class="text-[10px] text-slate-400" id="drive-progress-desc">Uploading PunarChakra_Master_Backup.json & 5 CSV ledgers...</p>
+      </div>
+
+      <!-- Backup Action Controls -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <button onclick="runGoogleDriveSync()" class="p-3 rounded-2xl bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 text-white font-black shadow flex items-center justify-center gap-2">
+          <span>⚡</span>
+          <span>Save All to Drive Now</span>
+        </button>
+        <button onclick="exportAllTablesCsv()" class="p-3 rounded-2xl bg-[#09121f] hover:bg-blue-900/60 border border-blue-700/60 text-blue-200 font-bold flex items-center justify-center gap-2">
+          <span>📊</span>
+          <span>Export Google Sheets CSVs</span>
+        </button>
+      </div>
+
+      <!-- Recent Drive Backups List -->
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-blue-200">Recent Cloud Backups:</span>
+          <span class="text-[10px] text-emerald-400 font-mono">Status: Connected</span>
+        </div>
+        <div class="bg-[#09121f] rounded-2xl border border-blue-900/70 divide-y divide-blue-950/80 max-h-52 overflow-y-auto" id="modal-drive-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-blue-900/60 flex items-center justify-between text-[11px] text-slate-400">
+        <span>Auto-Save on every admin CRUD action is active</span>
+        <button onclick="closeModal('modal-drive')" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SCHEDULE DOORSTEP PICKUP -->
+  <div id="modal-booking" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-emerald-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-emerald-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📅</span>
+          <h3 class="font-black text-white text-lg">Schedule Doorstep Scrap Pickup</h3>
+        </div>
+        <button onclick="closeModal('modal-booking')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Pickup Address (Bengaluru)</label>
+          <input type="text" id="booking-address" value="Flat 402, Green Glen Layout, Indiranagar, Bengaluru - 560038" class="w-full bg-[#091510] border border-emerald-800/60 rounded-xl px-3 py-2 text-white">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Preferred Date</label>
+            <select id="booking-date" class="w-full bg-[#091510] border border-emerald-800/60 rounded-xl px-3 py-2 text-white">
+              <option>Today (Instant Slot)</option>
+              <option selected>Tomorrow (Recommended)</option>
+              <option>Saturday (Weekend Drive)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Time Slot</label>
+            <select id="booking-slot" class="w-full bg-[#091510] border border-emerald-800/60 rounded-xl px-3 py-2 text-white">
+              <option>Morning (9 AM - 12 PM)</option>
+              <option selected>Afternoon (12 PM - 3 PM)</option>
+              <option>Evening (3 PM - 6 PM)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Payout Receiving Method</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" class="p-2 rounded-xl bg-emerald-600 text-white font-bold text-center border border-emerald-400">UPI Instant</button>
+            <button type="button" class="p-2 rounded-xl bg-[#091510] text-slate-300 font-bold text-center border border-emerald-900">Cash on Spot</button>
+            <button type="button" class="p-2 rounded-xl bg-[#091510] text-slate-300 font-bold text-center border border-emerald-900">Eco Wallet</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-emerald-800/60">
+        <button onclick="confirmBooking()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-sm shadow-xl">
+          🚀 Confirm Booking • Free Cancellation
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LIVE GPS TRACKER -->
+  <div id="modal-gps" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f241c] border border-emerald-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-emerald-800/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📍</span>
+          <h3 class="font-black text-white text-lg">Live Fleet GPS Tracker</h3>
+        </div>
+        <button onclick="closeModal('modal-gps')" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+
+      <div class="relative w-full h-48 bg-[#08120d] rounded-2xl overflow-hidden border border-emerald-800/60 flex items-center justify-center">
+        <svg class="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+          <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+            <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#10b981" stroke-width="0.5"/>
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+
+        <div class="absolute inset-x-8 top-1/2 -translate-y-1/2 h-1.5 bg-emerald-900 rounded-full">
+          <div class="h-full bg-gradient-to-r from-emerald-400 to-amber-400 w-3/4 rounded-full"></div>
+        </div>
+
+        <div class="absolute left-3/4 top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-xl shadow-lg animate-bounce">
+            🛺
+          </div>
+          <span class="text-[10px] font-black bg-slate-900/90 text-amber-300 px-1.5 rounded mt-1 border border-amber-400/40">
+            6 mins away
+          </span>
+        </div>
+
+        <div class="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col items-center">
+          <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm shadow">
+            🏠
+          </div>
+          <span class="text-[9px] font-bold text-white mt-1">Your Doorstep</span>
+        </div>
+      </div>
+
+      <div class="bg-[#0a1812] p-3 rounded-2xl border border-emerald-900 space-y-2 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Assigned Collector:</span>
+          <span class="font-bold text-white">Manjunath Gowda (★ 4.9)</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Electric Vehicle No:</span>
+          <span class="font-mono text-emerald-400 font-bold">KA-01-EV-4820</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Arrival Verification OTP:</span>
+          <span class="font-mono text-xl text-amber-400 font-black tracking-widest">4820</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD/EDIT INDIVIDUAL -->
+  <div id="modal-individual" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#150f21] border border-purple-600/50 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-purple-800/60">
+        <h3 id="modal-ind-title" class="font-black text-white text-lg">Add New Individual</h3>
+        <button onclick="closeModal('modal-individual')" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <input type="hidden" id="form-ind-id">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-purple-300 mb-1">Citizen Full Name</label>
+          <input type="text" id="form-ind-name" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-purple-300 mb-1">Phone Number</label>
+          <input type="text" id="form-ind-phone" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-purple-300 mb-1">Residential Area / Layout</label>
+          <input type="text" id="form-ind-area" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-purple-300 mb-1">Eco Wallet Balance (₹)</label>
+          <input type="number" id="form-ind-wallet" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-3 py-2 text-white">
+        </div>
+      </div>
+      <div class="pt-3 border-t border-purple-800/60 flex justify-end gap-2">
+        <button onclick="closeModal('modal-individual')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">Cancel</button>
+        <button onclick="saveIndividualCustomer()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow">Save Individual</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD/EDIT B2B -->
+  <div id="modal-b2b" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#1b150f] border border-amber-600/50 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-amber-800/60">
+        <h3 id="modal-b2b-title" class="font-black text-white text-lg">Add B2B Enterprise</h3>
+        <button onclick="closeModal('modal-b2b')" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <input type="hidden" id="form-b2b-id">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Company / Factory Name</label>
+          <input type="text" id="form-b2b-name" class="w-full bg-[#110e0a] border border-amber-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">GSTIN Number</label>
+          <input type="text" id="form-b2b-gstin" class="w-full bg-[#110e0a] border border-amber-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Contact Email</label>
+          <input type="email" id="form-b2b-email" class="w-full bg-[#110e0a] border border-amber-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Estimated Monthly Volume</label>
+          <input type="text" id="form-b2b-vol" class="w-full bg-[#110e0a] border border-amber-800 rounded-xl px-3 py-2 text-white">
+        </div>
+      </div>
+      <div class="pt-3 border-t border-amber-800/60 flex justify-end gap-2">
+        <button onclick="closeModal('modal-b2b')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">Cancel</button>
+        <button onclick="saveB2BEnterprise()" class="px-4 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow">Save Enterprise</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD/EDIT COLLECTOR -->
+  <div id="modal-collector" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0f1a21] border border-sky-600/50 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-sky-800/60">
+        <h3 id="modal-col-title" class="font-black text-white text-lg">Add Verified Collector</h3>
+        <button onclick="closeModal('modal-collector')" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <input type="hidden" id="form-col-id">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-sky-300 mb-1">Collector Driver Name</label>
+          <input type="text" id="form-col-name" class="w-full bg-[#091117] border border-sky-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-sky-300 mb-1">Mobile Number</label>
+          <input type="text" id="form-col-phone" class="w-full bg-[#091117] border border-sky-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-sky-300 mb-1">Electric Vehicle No</label>
+          <input type="text" id="form-col-veh" class="w-full bg-[#091117] border border-sky-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-sky-300 mb-1">Assigned Territory Cluster</label>
+          <input type="text" id="form-col-zone" class="w-full bg-[#091117] border border-sky-800 rounded-xl px-3 py-2 text-white">
+        </div>
+      </div>
+      <div class="pt-3 border-t border-sky-800/60 flex justify-end gap-2">
+        <button onclick="closeModal('modal-collector')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">Cancel</button>
+        <button onclick="saveCollectorDriver()" class="px-4 py-1.5 rounded-lg bg-sky-400 hover:bg-sky-300 text-slate-950 font-black text-xs shadow">Save Collector</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD SCRAP ITEM -->
+  <div id="modal-scrap" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-[#150f21] border border-purple-600/50 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-purple-800/60">
+        <h3 class="font-black text-white text-lg">Add New Scrap Material</h3>
+        <button onclick="closeModal('modal-scrap')" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-purple-300 mb-1">Item Name (English)</label>
+          <input type="text" id="form-scrap-name" placeholder="e.g. Copper Tubes" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-purple-300 mb-1">Item Name (ಕನ್ನಡ)</label>
+          <input type="text" id="form-scrap-name-kn" placeholder="e.g. ತಾಮ್ರದ ಕೊಳವೆಗಳು" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-bold text-purple-300 mb-1">Category</label>
+            <select id="form-scrap-cat" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-2 py-2 text-white">
+              <option value="Metals">Metals</option>
+              <option value="Paper">Paper</option>
+              <option value="Plastics">Plastics</option>
+              <option value="E-Waste">E-Waste</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-purple-300 mb-1">Spot Rate (₹)</label>
+            <input type="number" id="form-scrap-rate" value="100" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-2 py-2 text-white">
+          </div>
+          <div>
+            <label class="block font-bold text-purple-300 mb-1">Unit</label>
+            <select id="form-scrap-unit" class="w-full bg-[#0d0914] border border-purple-800 rounded-xl px-2 py-2 text-white">
+              <option value="kg">kg</option>
+              <option value="pc">piece</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="pt-3 border-t border-purple-800/60 flex justify-end gap-2">
+        <button onclick="closeModal('modal-scrap')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">Cancel</button>
+        <button onclick="saveScrapItem()" class="px-4 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow">Add Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-[#07130e] border-t border-emerald-900/60 py-6 px-4 text-center text-xs text-slate-400 space-y-2">
+    <div class="flex items-center justify-center gap-2">
+      <img src="media_1794697927287_13d13a7a.jpg" alt="PunarChakra Logo" class="h-6 w-auto inline rounded bg-white p-0.5" onerror="this.style.display='none'">
+      <span class="text-white font-black">PunarChakra</span> •
+      <span id="footer-tagline">Giving Waste a New Life • ತ್ಯಾಜ್ಯಕ್ಕೆ ಹೊಸ ಜೀವನ</span>
+    </div>
+    <p id="footer-sub" class="text-[11px] text-slate-500">
+      Verified scrap collection • Certified digital weighing • Daily online exchange rates sync • Google Drive Cloud Backups • Instant UPI Payouts
+    </p>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- SCRIPT LOGIC (ONLINE RATES SYNC, GOOGLE DRIVE, AI SUITE, WHATSAPP, CRUD) -->
+  <!-- ========================================================================= -->
+  <script>
+    // --- 1. LANGUAGE TRANSLATION DICTIONARY ---
+    let currentLang = 'en';
+
+    const i18n = {
+      en: {
+        toggleBtn: '🇮🇳 ಕನ್ನಡ (Kannada)',
+        subtitle: 'Giving Waste a New Life • ತ್ಯಾಜ್ಯಕ್ಕೆ ಹೊಸ ಜೀವನ',
+        switchPortal: 'Switch Portal',
+        bookPickup: 'Book Pickup',
+        heroPill: '100% Responsible Recycling • Zero Landfill Commitment',
+        heroTitle: 'Doorstep Scrap Pickup with <span class="text-emerald-400">Verified Electronic Weighing</span> & Instant UPI Payout.',
+        heroDesc: 'Sell your old newspapers 📰, electronics 💻, copper & brass metals ⚙️, plastics 🥤, or appliances. Verified collectors arrive at your chosen time slot with certified digital scales.',
+        heroSchedule: 'Schedule Doorstep Pickup',
+        heroAi: 'Gemini AI Scrap Camera',
+        heroVoice: 'Voice Assistant',
+        statFree: 'Free Doorstep Pickup',
+        statIot: 'Certified Digital Scales',
+        statVol: 'Recycled Responsibly',
+        statUpi: 'UPI / Cash On The Spot',
+        activePickupTag: '● En Route Pickup',
+        activePickupTitle: 'Collector Manjunath Gowda is 6 mins away',
+        activePickupSub: 'Vehicle: <span class="font-mono text-emerald-400">KA-01-EV-4820</span> • Indiranagar, Bengaluru • Arrival OTP: <b class="text-amber-400">4820</b>',
+        btnTrackGps: 'Track Live on GPS Map',
+        catalogTitle: 'Scrap Categories & Live Payout Rates',
+        catalogSub: 'Transparent market-linked rates guaranteed at your doorstep',
+        payoutLabel: 'Estimated Doorstep Cash / UPI Payout',
+        payoutConfirm: 'Confirm Pickup Schedule',
+        portalCust: 'Individuals',
+        portalBiz: 'B2B Enterprise',
+        portalExec: 'Certified Collector',
+        portalAdm: 'Admin Console',
+        footerTag: 'Giving Waste a New Life • ತ್ಯಾಜ್ಯಕ್ಕೆ ಹೊಸ ಜೀವನ',
+        footerSub: 'Verified scrap collection • Certified digital weighing • Daily online exchange rates sync • Google Drive Cloud Backups • Instant UPI Payouts',
+      },
+      kn: {
+        toggleBtn: '🇬🇧 English (ಇಂಗ್ಲಿಷ್)',
+        subtitle: 'ತ್ಯಾಜ್ಯಕ್ಕೆ ಹೊಸ ಜೀವನ • ಪರಿಶುದ್ಧ ಭೂಮಿ, ಹಸಿರು ಸಂಪತ್ತು',
+        switchPortal: 'ಪೋರ್ಟಲ್ ಬದಲಾಯಿಸಿ',
+        bookPickup: 'ಪಿಕಪ್ ಬುಕ್ ಮಾಡಿ',
+        heroPill: '100% ಜವಾಬ್ದಾರಿಯುತ ಮರುಬಳಕೆ • ಕಸಮುಕ್ತ ಭೂಮಿ ಸಂಕಲ್ಪ',
+        heroTitle: 'ಮನೆಯ ಬಾಗಿಲಲ್ಲೇ <span class="text-emerald-400">ಡಿಜಿಟಲ್ ತೂಕ</span> ಮತ್ತು ತಕ್ಷಣದ ಯುಪಿಐ ನಗದು ಪಾವತಿಯೊಂದಿಗೆ ಗುಜರಿ ಮಾರಾಟ.',
+        heroDesc: 'ನಿಮ್ಮ ಹಳೆಯ ದಿನಪತ್ರಿಕೆಗಳು 📰, ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ 💻, ತಾಮ್ರ ಮತ್ತು ಹಿತ್ತಾಳೆ ಲೋಹಗಳು ⚙️, ಪ್ಲಾಸ್ಟಿಕ್ ಬಾಟಲಿಗಳು 🥤 - ಪುನರ್ಚಕ್ರದ ದೃಢೀಕೃತ ಸಂಗ್ರಹಕಾರರು ಬಾಗಿಲಿಗೆ ಬಂದು ಖರೀದಿಸುತ್ತಾರೆ.',
+        heroSchedule: 'ಪಿಕಪ್ ನಿಗದಿಪಡಿಸಿ',
+        heroAi: 'ಜೆಮಿನಿ ಎಐ ಕ್ಯಾಮೆರಾ',
+        heroVoice: 'ಧ್ವನಿ ಬುಕಿಂಗ್',
+        statFree: 'ಉಚಿತ ಮನೆ ಬಾಗಿಲು ಪಿಕಪ್',
+        statIot: 'ದೃಢೀಕೃತ ಡಿಜಿಟಲ್ ತಕ್ಕಡಿ',
+        statVol: 'ಜವಾಬ್ದಾರಿಯುತ ಮರುಬಳಕೆ',
+        statUpi: 'ತಕ್ಷಣದ ಯುಪಿಐ / ನಗದು',
+        activePickupTag: '● ವಾಹನ ಬರುತ್ತಿದೆ',
+        activePickupTitle: 'ಸಂಗ್ರಹಕಾರ ಮಂಜುನಾಥ್ ಗೌಡ 6 ನಿಮಿಷದಲ್ಲಿ ತಲುಪಲಿದ್ದಾರೆ',
+        activePickupSub: 'ವಾಹನ: <span class="font-mono text-emerald-400">KA-01-EV-4820</span> • ಇಂದಿರಾನಗರ, ಬೆಂಗಳೂರು • OTP: <b class="text-amber-400">4820</b>',
+        btnTrackGps: 'ಲೈವ್ ಜಿಪಿಎಸ್ ನಕ್ಷೆಯಲ್ಲಿ ನೋಡಿ',
+        catalogTitle: 'ಗುಜರಿ ವರ್ಗಗಳು ಮತ್ತು ನೇರ ಮಾರುಕಟ್ಟೆ ದರಗಳು',
+        catalogSub: 'ಮನೆಯ ಬಾಗಿಲಲ್ಲೇ ಪಾರದರ್ಶಕ ಮತ್ತು ನಿಖರ ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಖಾತರಿ',
+        payoutLabel: 'ಒಟ್ಟು ಅಂದಾಜು ನಗದು / ಯುಪಿಐ ಪಾವತಿ',
+        payoutConfirm: 'ಪಿಕಪ್ ಬುಕಿಂಗ್ ಖಚಿತಪಡಿಸಿ',
+        portalCust: 'ಗ್ರಾಹಕರು / ಮನೆಗಳು',
+        portalBiz: 'ಬಿ2ಬಿ ಕಾರ್ಪೊರೇಟ್',
+        portalExec: 'ದೃಢೀಕೃತ ಸಂಗ್ರಹಕಾರ',
+        portalAdm: 'ಅಡ್ಮಿನ್ ಕಾನ್ಸೋಲ್',
+        footerTag: 'ತ್ಯಾಜ್ಯಕ್ಕೆ ಹೊಸ ಜೀವನ • ಪರಿಶುದ್ಧ ಭೂಮಿ, ಹಸಿರು ಸಂಪತ್ತು',
+        footerSub: 'ದೃಢೀಕೃತ ಗುಜರಿ ಸಂಗ್ರಹ • ಡಿಜಿಟಲ್ ತೂಕ • ದಿನಂಪ್ರತಿ ಆನ್‌ಲೈನ್ ದರ ಹೊಂದಾಣಿಕೆ • ಗೂಗಲ್ ಡ್ರೈವ್ ಕ್ಲೌಡ್ ಬ್ಯಾಕಪ್ • ತಕ್ಷಣದ ಯುಪಿಐ ಪಾವತಿ',
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = (currentLang === 'en') ? 'kn' : 'en';
+      applyLanguage(currentLang);
+    }
+
+    function applyLanguage(lang) {
+      const t = i18n[lang];
+      document.getElementById('lang-toggle-text').textContent = t.toggleBtn;
+      document.getElementById('nav-subtitle').textContent = t.subtitle;
+      document.getElementById('btn-switch-portal').textContent = t.switchPortal;
+      document.getElementById('btn-nav-book').textContent = t.bookPickup;
+      document.getElementById('btn-portal-cust').textContent = t.portalCust;
+      document.getElementById('btn-portal-biz').textContent = t.portalBiz;
+      document.getElementById('btn-portal-exec').textContent = t.portalExec;
+      document.getElementById('btn-portal-adm').textContent = t.portalAdm;
+      document.getElementById('hero-pill').innerHTML = t.heroPill;
+      document.getElementById('hero-title').innerHTML = t.heroTitle;
+      document.getElementById('hero-desc').textContent = t.heroDesc;
+      document.getElementById('hero-btn-schedule').textContent = t.heroSchedule;
+      document.getElementById('hero-btn-ai').textContent = t.heroAi;
+      document.getElementById('hero-btn-voice').textContent = t.heroVoice;
+      document.getElementById('stat-free').textContent = t.statFree;
+      document.getElementById('stat-iot').textContent = t.statIot;
+      document.getElementById('stat-vol').textContent = t.statVol;
+      document.getElementById('stat-upi').textContent = t.statUpi;
+      document.getElementById('active-pickup-tag').textContent = t.activePickupTag;
+      document.getElementById('active-pickup-title').textContent = t.activePickupTitle;
+      document.getElementById('active-pickup-sub').innerHTML = t.activePickupSub;
+      document.getElementById('btn-track-gps').textContent = t.btnTrackGps;
+      document.getElementById('catalog-title').textContent = t.catalogTitle;
+      document.getElementById('catalog-sub').textContent = t.catalogSub;
+      document.getElementById('cart-payout-label').textContent = t.payoutLabel;
+      document.getElementById('cart-btn-confirm').textContent = t.payoutConfirm;
+      document.getElementById('footer-tagline').textContent = t.footerTag;
+      document.getElementById('footer-sub').textContent = t.footerSub;
+      renderScrapCatalog();
+    }
+
+    // --- 2. DATA STORE ---
+    let scrapItems = [
+      { id: 'newspaper', name: 'Old Newspapers', nameKn: 'ಹಳೆಯ ದಿನಪತ್ರಿಕೆಗಳು', cat: 'Paper', rate: 22, unit: 'kg', icon: '📰', desc: 'Daily publications, paper inserts', co2: 1.1, surge: '+₹2 (10%)' },
+      { id: 'copper', name: 'Heavy Copper Wire', nameKn: 'ಶುದ್ಧ ತಾಮ್ರದ ತಂತಿ', cat: 'Metals', rate: 720, unit: 'kg', icon: '⚡', desc: 'Grade A stripped electrical wires', co2: 4.8, surge: '+₹20 (Surge!)' },
+      { id: 'cardboard', name: 'Corrugated Boxes', nameKn: 'ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಗಳು', cat: 'Paper', rate: 16, unit: 'kg', icon: '📦', desc: 'Amazon/Flipkart shipping cartons', co2: 0.9, surge: '+₹1.5 (10%)' },
+      { id: 'brass', name: 'Brass Utensils', nameKn: 'ಹಿತ್ತಾಳೆ ಪಾತ್ರೆಗಳು', cat: 'Metals', rate: 490, unit: 'kg', icon: '⚙️', desc: 'Pooja vessels, pipe fittings', co2: 3.5, surge: '+₹15 (3.1%)' },
+      { id: 'pet_bottles', name: 'PET Bottles', nameKn: 'ಪ್ಲಾಸ್ಟಿಕ್ ಬಾಟಲಿಗಳು', cat: 'Plastics', rate: 28, unit: 'kg', icon: '🥤', desc: 'Water & soft drink bottles', co2: 2.3, surge: '+₹3 (12%)' },
+      { id: 'laptop', name: 'Dead Laptops', nameKn: 'ಇ-ತ್ಯಾಜ್ಯ ಲ್ಯಾಪ್‌ಟಾಪ್', cat: 'E-Waste', rate: 350, unit: 'pc', icon: '💻', desc: 'Old PC motherboards, intact units', co2: 12.0, surge: '+₹50 (16%)' },
+      { id: 'aluminum', name: 'Aluminum Cans', nameKn: 'ಅಲ್ಯೂಮಿನಿಯಂ ಕ್ಯಾನ್', cat: 'Metals', rate: 165, unit: 'kg', icon: '🥫', desc: 'Soda cans, clean sheets', co2: 9.1, surge: '+₹5 (3.1%)' },
+      { id: 'iron', name: 'Iron & Steel', nameKn: 'ಕಬ್ಬಿಣ ಮತ್ತು ಉಕ್ಕು', cat: 'Metals', rate: 38, unit: 'kg', icon: '🔨', desc: 'Rods, grills, furniture frames', co2: 1.5, surge: '+₹2 (5.5%)' },
+    ];
+
+    let individualsData = [
+      { id: 'usr_1', name: 'Ananya Sharma', phone: '+91 98765 43210', area: 'Indiranagar, Bengaluru', wallet: 2450, totalSold: '42 kg' },
+      { id: 'usr_2', name: 'Rahul Verma', phone: '+91 98860 11223', area: 'Koramangala, Bengaluru', wallet: 1800, totalSold: '28 kg' },
+      { id: 'usr_3', name: 'Priya Hegde', phone: '+91 99001 55667', area: 'HSR Layout, Bengaluru', wallet: 3120, totalSold: '65 kg' },
+      { id: 'usr_4', name: 'Suresh Rao', phone: '+91 94480 33445', area: 'Malleshwaram, Bengaluru', wallet: 920, totalSold: '18 kg' },
+    ];
+
+    let b2bData = [
+      { id: 'biz_1', name: 'Infosys Eco Park', gstin: '29AABCI1234F1Z8', email: 'procurement@infosys-eco.in', volume: '15 MT / Month', tier: 'Tier-1 Gold Enterprise' },
+      { id: 'biz_2', name: 'Bosch Industrial Hub', gstin: '29AAACB1100H1Z2', email: 'scrap-ops@bosch-hub.in', volume: '30 MT / Month', tier: 'Tier-1 Platinum Industrial' },
+      { id: 'biz_3', name: 'BigBasket Fulfillment', gstin: '29AABCB8890K1Z9', email: 'supplychain@bigbasket.com', volume: '12 MT / Month', tier: 'Tier-2 Logistics Account' },
+    ];
+
+    let collectorsData = [
+      { id: 'col_1', name: 'Manjunath Gowda', phone: '+91 98451 22301', veh: 'KA-01-EV-4820', zone: 'Indiranagar - Domlur', rating: '★ 4.9', status: 'En Route' },
+      { id: 'col_2', name: 'Venkatesh K.', phone: '+91 98452 99012', veh: 'KA-04-EV-2041', zone: 'Koramangala - HSR', rating: '★ 4.8', status: 'Available' },
+      { id: 'col_3', name: 'Basavaraj Patil', phone: '+91 97410 88712', veh: 'KA-05-EV-7722', zone: 'Whitefield - Mahadevapura', rating: '★ 4.9', status: 'On Pickup' },
+    ];
+
+    const cart = { newspaper: 10, copper: 2 };
+    let autoSaveDrive = true;
+
+    // --- 3. GOOGLE DRIVE CLOUD ENGINE & PERSISTENCE ---
+    let driveBackupsHistory = [
+      { name: 'PunarChakra_Master_Backup.json', type: 'JSON Database', size: '14.2 KB', modified: 'Today, 09:15 AM', status: '✅ Saved in Drive', link: 'https://drive.google.com' },
+      { name: 'PunarChakra_Customers_Ledger.csv', type: 'Google Sheets CSV', size: '4.8 KB', modified: 'Today, 09:15 AM', status: '✅ Saved in Drive', link: 'https://drive.google.com' },
+      { name: 'PunarChakra_B2B_Enterprises.csv', type: 'Google Sheets CSV', size: '5.1 KB', modified: 'Today, 09:15 AM', status: '✅ Saved in Drive', link: 'https://drive.google.com' },
+      { name: 'PunarChakra_Certified_Collectors.csv', type: 'Google Sheets CSV', size: '3.9 KB', modified: 'Today, 09:15 AM', status: '✅ Saved in Drive', link: 'https://drive.google.com' },
+      { name: 'PunarChakra_Daily_Scrap_Rates.csv', type: 'Google Sheets CSV', size: '3.2 KB', modified: 'Today, 09:15 AM', status: '✅ Saved in Drive', link: 'https://drive.google.com' },
+    ];
+
+    function openDriveBackupModal() {
+      renderDriveModalList();
+      document.getElementById('modal-drive').classList.remove('hidden');
+    }
+
+    function renderDriveModalList() {
+      const container = document.getElementById('modal-drive-list');
+      if (!container) return;
+      container.innerHTML = '';
+      driveBackupsHistory.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-3 flex items-center justify-between hover:bg-blue-900/30 transition-all';
+        div.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📄</span>
+            <div>
+              <div class="font-bold text-white">${item.name}</div>
+              <div class="text-[10px] text-slate-400">${item.type} • ${item.size} • ${item.modified}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-emerald-400 font-bold">${item.status}</span>
+            <button onclick="downloadDriveItem('${item.name}')" class="px-2 py-1 rounded bg-blue-800 hover:bg-blue-700 text-white text-[10px] font-bold">Download</button>
+            <a href="https://drive.google.com" target="_blank" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-300 text-[10px] font-bold">Open ↗</a>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      // Also render in Admin Tab
+      const adminTbody = document.getElementById('drive-files-tbody');
+      if (adminTbody) {
+        adminTbody.innerHTML = '';
+        driveBackupsHistory.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-blue-950/40';
+          tr.innerHTML = `
+            <td class="p-3 font-bold text-white flex items-center gap-2">
+              <span>📄</span>
+              <span>${item.name}</span>
+            </td>
+            <td class="p-3 text-slate-300">${item.type}</td>
+            <td class="p-3 font-mono text-emerald-400">PunarChakra-Backups/</td>
+            <td class="p-3 text-slate-300">${item.modified}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">${item.status}</span></td>
+            <td class="p-3 text-right space-x-1.5">
+              <button onclick="downloadDriveItem('${item.name}')" class="px-2 py-1 rounded bg-blue-800 hover:bg-blue-700 text-white text-[10px] font-bold">Download</button>
+              <a href="https://drive.google.com" target="_blank" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-300 text-[10px] font-bold inline-block">Drive ↗</a>
+            </td>
+          `;
+          adminTbody.appendChild(tr);
+        });
+      }
+    }
+
+    function runGoogleDriveSync() {
+      const progressDiv = document.getElementById('drive-sync-progress');
+      if (progressDiv) progressDiv.classList.remove('hidden');
+
+      let pct = 10;
+      const interval = setInterval(() => {
+        pct += 25;
+        if (pct <= 100) {
+          const bar = document.getElementById('drive-progress-bar');
+          const pctLabel = document.getElementById('drive-progress-pct');
+          if (bar) bar.style.width = `${pct}%`;
+          if (pctLabel) pctLabel.textContent = `${pct}%`;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            if (progressDiv) progressDiv.classList.add('hidden');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            driveBackupsHistory.unshift({
+              name: `PunarChakra_Master_Backup_${now.toISOString().slice(0, 10)}.json`,
+              type: 'JSON Database',
+              size: '14.8 KB',
+              modified: `Today, ${timeStr}`,
+              status: '✅ Saved in Drive',
+              link: 'https://drive.google.com'
+            });
+
+            renderDriveModalList();
+            showDriveToast(`Successfully synced 6 ledgers to Google Drive folder 'PunarChakra-Backups'!`);
+          }, 300);
+        }
+      }, 200);
+    }
+
+    function triggerDirectDriveBackup() {
+      showDriveToast("Saving instant snapshot to Google Drive folder 'PunarChakra-Backups'...");
+      setTimeout(() => {
+        runGoogleDriveSync();
+        openDriveBackupModal();
+      }, 500);
+    }
+
+    function triggerAutoSaveDrive(actionDesc) {
+      if (!autoSaveDrive) return;
+      showDriveToast(`Auto-saving changes (${actionDesc}) to Google Drive / PunarChakra-Backups...`);
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('header-drive-status').textContent = 'Synced';
+      const admTime = document.getElementById('adm-last-drive-time');
+      if (admTime) admTime.textContent = `Today, ${timeStr} IST`;
+    }
+
+    function showDriveToast(message) {
+      const toast = document.getElementById('drive-toast');
+      const msgEl = document.getElementById('drive-toast-msg');
+      if (toast && msgEl) {
+        msgEl.textContent = message;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.remove('translate-y-4'), 10);
+        setTimeout(() => {
+          toast.classList.add('translate-y-4');
+          setTimeout(() => toast.classList.add('hidden'), 300);
+        }, 4000);
+      }
+    }
+
+    function toggleAutoSaveDrive() {
+      autoSaveDrive = !autoSaveDrive;
+      const label = document.getElementById('adm-autosave-label');
+      if (label) {
+        label.textContent = autoSaveDrive ? 'ENABLED' : 'PAUSED';
+        label.className = autoSaveDrive ? 'font-bold text-emerald-400' : 'font-bold text-slate-400';
+      }
+      showDriveToast(`Google Drive Auto-Save is now ${autoSaveDrive ? 'Enabled' : 'Paused'}.`);
+    }
+
+    function downloadDriveItem(filename) {
+      let content = "";
+      if (filename.endsWith('.json')) {
+        content = JSON.stringify({
+          app: "PunarChakra",
+          driveFolder: "PunarChakra-Backups",
+          timestamp: new Date().toISOString(),
+          individuals: individualsData,
+          b2b: b2bData,
+          collectors: collectorsData,
+          rates: scrapItems,
+          cart: cart
+        }, null, 2);
+      } else {
+        content = "Name,Phone,Area,Wallet\n" + individualsData.map(i => `"${i.name}","${i.phone}","${i.area}",${i.wallet}`).join('\n');
+      }
+      const blob = new Blob([content], { type: filename.endsWith('.json') ? 'application/json' : 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportAllTablesCsv() {
+      // 1. Individuals CSV
+      let indCsv = "Customer ID,Full Name,Phone Number,Area,City,Wallet Balance (INR),Total Sold\n" +
+        individualsData.map(i => `"${i.id}","${i.name}","${i.phone}","${i.area}","Bengaluru",${i.wallet},"${i.totalSold}"`).join('\n');
+      
+      const blob = new Blob([indCsv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "PunarChakra_Customers_GoogleSheets_Ledger.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      showDriveToast("Exported CSV Sheets ledger ready to open in Google Drive / Sheets!");
+    }
+
+    // --- 4. GEMINI AI VISION SCRAP CAMERA ENGINE ---
+    const sampleAiCatalog = {
+      copper: {
+        name: 'Stripped Grade-A Copper Wires',
+        nameKn: 'ಶುದ್ಧ ತಾಮ್ರದ ತಂತಿ (Grade A 98%)',
+        conf: '98.7% Confidence',
+        weight: '3.5 kg',
+        weightNum: 3.5,
+        rate: 720,
+        payout: '₹2,520',
+        co2: '16.8 kg CO₂',
+        tip: 'Strip outer PVC jacket to unlock +₹80/kg Grade-A bonus rate!',
+        itemId: 'copper'
+      },
+      cardboard: {
+        name: 'Corrugated Kraft Shipping Boxes',
+        nameKn: 'ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಗಳು (Grade 1 Kraft)',
+        conf: '99.1% Confidence',
+        weight: '18.0 kg',
+        weightNum: 18.0,
+        rate: 16,
+        payout: '₹288',
+        co2: '16.2 kg CO₂',
+        tip: 'Flatten cartons and tie with jute twine to earn clean bundle bonus!',
+        itemId: 'cardboard'
+      },
+      pet_bottles: {
+        name: 'Transparent PET Beverage Bottles (#1)',
+        nameKn: 'ಸ್ವಚ್ಛ ಪ್ಲಾಸ್ಟಿಕ್ ಬಾಟಲಿಗಳು (PET #1)',
+        conf: '97.5% Confidence',
+        weight: '6.2 kg',
+        weightNum: 6.2,
+        rate: 28,
+        payout: '₹174',
+        co2: '14.2 kg CO₂',
+        tip: 'Remove HDPE caps and crush bottles flat to optimize collector transport!',
+        itemId: 'pet_bottles'
+      },
+      laptop: {
+        name: 'Dead Laptop PCB & Precious Contact Pins',
+        nameKn: 'ಇ-ತ್ಯಾಜ್ಯ ಲ್ಯಾಪ್‌ಟಾಪ್ ಮದರ್‌ಬೋರ್ಡ್',
+        conf: '96.8% Confidence',
+        weight: '1 Piece',
+        weightNum: 1,
+        rate: 350,
+        payout: '₹350',
+        co2: '12.0 kg CO₂',
+        tip: 'Keep motherboard intact without breaking circuit tracks for top e-waste valuation!',
+        itemId: 'laptop'
+      },
+      brass: {
+        name: 'Solid Brass Pooja Vessels & Utensils',
+        nameKn: 'ಹಿತ್ತಾಳೆ ಪಾತ್ರೆಗಳು ಮತ್ತು ವಿಗ್ರಹಗಳು',
+        conf: '98.2% Confidence',
+        weight: '4.0 kg',
+        weightNum: 4.0,
+        rate: 490,
+        payout: '₹1,960',
+        co2: '14.0 kg CO₂',
+        tip: 'Wipe oil residues with cloth to classify under high-density brass tier!',
+        itemId: 'brass'
+      },
+      aluminum: {
+        name: 'Clean Aluminum Beverage Cans & Sheets',
+        nameKn: 'ಅಲ್ಯೂಮಿನಿಯಂ ಪಾನೀಯ ಕ್ಯಾನ್‌ಗಳು',
+        conf: '97.9% Confidence',
+        weight: '5.5 kg',
+        weightNum: 5.5,
+        rate: 165,
+        payout: '₹907',
+        co2: '50.1 kg CO₂',
+        tip: 'Crush soda cans flat to achieve maximum density payout!',
+        itemId: 'aluminum'
+      }
+    };
+
+    let activeAiDetection = sampleAiCatalog.copper;
+
+    function runAiScanWithSample(sampleKey) {
+      const data = sampleAiCatalog[sampleKey] || sampleAiCatalog.copper;
+      activeAiDetection = data;
+
+      const dropzone = document.getElementById('ai-dropzone');
+      const laser = document.getElementById('ai-laser');
+      const resultCard = document.getElementById('ai-result');
+
+      laser.classList.remove('hidden');
+      document.getElementById('ai-scan-prompt').textContent = `Gemini Vision analyzing ${data.name}...`;
+
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        document.getElementById('ai-card-conf').textContent = data.conf;
+        document.getElementById('ai-card-name').textContent = data.name;
+        document.getElementById('ai-card-kn').textContent = `${data.nameKn}`;
+        document.getElementById('ai-card-weight').textContent = data.weight;
+        document.getElementById('ai-card-rate').textContent = `₹${data.rate} / ${data.itemId === 'laptop' ? 'pc' : 'kg'}`;
+        document.getElementById('ai-card-payout').textContent = data.payout;
+        document.getElementById('ai-card-co2').textContent = data.co2;
+        document.getElementById('ai-card-tip').textContent = data.tip;
+
+        resultCard.classList.remove('hidden');
+        document.getElementById('ai-scan-prompt').textContent = `Analysis complete for ${data.name}!`;
+      }, 700);
+    }
+
+    function addDetectedAiItemToCart() {
+      const item = activeAiDetection;
+      cart[item.itemId] = (cart[item.itemId] || 0) + item.weightNum;
+      recalculateCart();
+      closeModal('modal-ai');
+      alert(`✨ Added ${item.weight} of ${item.name} (${item.payout}) to your pickup cart!`);
+    }
+
+    // --- 5. MULTILINGUAL AI VOICE ASSISTANT ENGINE ---
+    function simulateVoiceQuery(lang) {
+      const nlpCard = document.getElementById('voice-nlp-card');
+      nlpCard.classList.remove('hidden');
+
+      if (lang === 'kn') {
+        document.getElementById('voice-res-items').textContent = 'ದಿನಪತ್ರಿಕೆ (Newspaper 15kg), ಪ್ಲಾಸ್ಟಿಕ್ (6kg)';
+        document.getElementById('voice-res-loc').textContent = 'ಇಂದಿರಾನಗರ, ಬೆಂಗಳೂರು - 560038';
+        document.getElementById('voice-res-slot').textContent = 'ನಾಳೆ ಬೆಳಿಗ್ಗೆ (Tomorrow 9-12 AM)';
+        document.getElementById('voice-res-payout').textContent = '₹498';
+      } else {
+        document.getElementById('voice-res-items').textContent = 'Cardboard 20kg, Copper Wires 4kg';
+        document.getElementById('voice-res-loc').textContent = 'Koramangala 4th Block, Bengaluru';
+        document.getElementById('voice-res-slot').textContent = 'Tomorrow Morning (9-12 AM)';
+        document.getElementById('voice-res-payout').textContent = '₹3,200';
+      }
+    }
+
+    function confirmVoiceExtractedBooking() {
+      closeModal('modal-voice');
+      updateCartQty('cardboard', 15);
+      openBookingModal();
+      alert('🎙️ Voice pickup schedule populated! Review your slot and address below.');
+    }
+
+    // --- 6. GEMINI SCRAP PREP ADVISOR ENGINE ---
+    const prepGuides = {
+      copper: {
+        title: 'Heavy Copper Electrical Wire',
+        bonus: '+₹80/kg Value Jump',
+        unsorted: '₹640/kg',
+        sorted: '₹720/kg',
+        steps: [
+          '1. <b>Strip PVC Sheath</b>: Use a craft knife to expose shiny bare wire (Grade-A bright bare copper).',
+          '2. <b>Remove Brass Connectors</b>: Separate plugs and solder joints into the brass bucket.',
+          '3. <b>Bundle in Coils</b>: Twist together in 2kg loops for quick certified digital scale verification.'
+        ]
+      },
+      paper: {
+        title: 'Old Newspapers & Corrugated Boxes',
+        bonus: '+15% Clean Bundle Rate',
+        unsorted: '₹12/kg (Mixed)',
+        sorted: '₹22/kg (Sorted)',
+        steps: [
+          '1. <b>Segregate Glossy Inserts</b>: Separate glossy magazine inserts from daily newsprint.',
+          '2. <b>Keep Bone-Dry</b>: Store away from rainwater; wet paper loses 40% value due to moisture tare.',
+          '3. <b>Tie in Flat Stacks</b>: Bundle using string so the collector can weigh in 1 step.'
+        ]
+      },
+      plastic: {
+        title: 'Rigid PET Bottles & HDPE Containers',
+        bonus: '+18% Clean Density',
+        unsorted: '₹20/kg',
+        sorted: '₹28/kg',
+        steps: [
+          '1. <b>Rinse Liquids</b>: Empty sticky soda residue to prevent insect attraction.',
+          '2. <b>Remove Caps & Rings</b>: Screw caps are HDPE (different polymer from PET body).',
+          '3. <b>Crush Flat</b>: Step on bottles to collapse volume for easier vehicle packing.'
+        ]
+      },
+      ewaste: {
+        title: 'Laptops, PCBs & Old Chargers',
+        bonus: '+₹50/pc High-Grade Bonus',
+        unsorted: '₹150/pc',
+        sorted: '₹350/pc',
+        steps: [
+          '1. <b>Remove Lithium Batteries</b>: Disconnect battery safely into fire-safe container.',
+          '2. <b>Keep Motherboards Intact</b>: Do not snap green boards; gold contacts lose value if scratched.',
+          '3. <b>Bundle Copper Cords</b>: Detach power adapters to sell separately at metal rates.'
+        ]
+      }
+    };
+
+    function showPrepDetails(key) {
+      const g = prepGuides[key] || prepGuides.copper;
+      document.getElementById('prep-mat-title').textContent = g.title;
+      document.getElementById('prep-bonus-tag').textContent = g.bonus;
+      document.getElementById('prep-steps').innerHTML = g.steps.map(s => `<div>${s}</div>`).join('');
+    }
+
+    // --- 7. DYNAMIC AI ECO-QUIZ CHALLENGE ENGINE ---
+    let quizCurrentIndex = 0;
+    let quizTotalScore = 0;
+
+    const quizQuestions = [
+      {
+        q: "Can greasy pizza delivery boxes with cheese residues be recycled with normal clean cardboard?",
+        qKn: "ಕನ್ನಡ: ಎಣ್ಣೆ ಅಂಟಿದ ಪಿಜ್ಜಾ ರಟ್ಟಿನ ಬಾಕ್ಸ್ ಅನ್ನು ಸ್ವಚ್ಛ ರಟ್ಟಿನ ಜೊತೆ ಮರುಬಳಕೆ ಮಾಡಬಹುದೇ?",
+        options: [
+          { text: "A) Yes, all paper and cardboard melts the same in paper mills", correct: false },
+          { text: "B) No, oil & grease contaminate paper pulp; cut off and recycle only the clean dry lid", correct: true }
+        ],
+        exp: "Correct! Oil and grease cannot be separated from paper fibers during pulping. Only tear off and recycle the clean upper lid!"
+      },
+      {
+        q: "Why should screw caps be removed from clear PET water bottles before recycling?",
+        qKn: "ಕನ್ನಡ: ಪ್ಲಾಸ್ಟಿಕ್ ಬಾಟಲಿಯ ಮುಚ್ಚಳವನ್ನು ಬೇರ್ಪಡಿಸಿ ನೀಡಬೇಕೇಕೆ?",
+        options: [
+          { text: "A) Caps are HDPE (#2) while bottles are PET (#1) with different melting temperatures", correct: true },
+          { text: "B) Caps are made of edible wax that dissolves", correct: false }
+        ],
+        exp: "Spot on! PET and HDPE are completely different polymers with different melting points. Collectors recycle them in separate batches!"
+      },
+      {
+        q: "What gives old laptop motherboards and electronic scrap high recycling value?",
+        qKn: "ಕನ್ನಡ: ಹಳೆಯ ಲ್ಯಾಪ್‌ಟಾಪ್ ಸರ್ಕ್ಯೂಟ್ ಬೋರ್ಡ್‌ಗಳು ಹೆಚ್ಚು ಬೆಲೆ ಬಾಳಲು ಕಾರಣವೇನು?",
+        options: [
+          { text: "A) High concentration of precious metals like Gold, Silver & Copper in contact pins", correct: true },
+          { text: "B) The plastic keyboard can be made into toys", correct: false }
+        ],
+        exp: "Exactly! 1 ton of scrap PC motherboards contains up to 40x more gold than 1 ton of raw gold ore!"
+      }
+    ];
+
+    function handleQuizAnswer(isCorrect, btn) {
+      const q = quizQuestions[quizCurrentIndex];
+      const expDiv = document.getElementById('quiz-explanation');
+
+      if (isCorrect) {
+        quizTotalScore += 100;
+        btn.classList.add('bg-emerald-600', 'text-white');
+        expDiv.innerHTML = `🎉 <b>Correct!</b> ${q.exp}`;
+      } else {
+        btn.classList.add('bg-rose-900', 'text-rose-200');
+        expDiv.innerHTML = `❌ <b>Not quite!</b> ${q.exp}`;
+      }
+      document.getElementById('quiz-score').textContent = `Score: ${quizTotalScore} Eco-Coins`;
+      expDiv.classList.remove('hidden');
+
+      setTimeout(() => {
+        quizCurrentIndex++;
+        if (quizCurrentIndex < quizQuestions.length) {
+          loadQuizQuestion(quizCurrentIndex);
+        } else {
+          document.getElementById('quiz-body').innerHTML = `
+            <div class="text-center py-6 space-y-4">
+              <div class="text-5xl">🏆</div>
+              <h4 class="text-xl font-black text-white">Quiz Challenge Completed!</h4>
+              <p class="text-xs text-purple-200">You scored <b>${quizTotalScore} Eco-Coins</b> (ಪುನಃ ನಾಣ್ಯಗಳು)! Credited directly to your citizen recycling wallet.</p>
+              <button onclick="closeModal('modal-eco-quiz')" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow">
+                Claim Reward & Close
+              </button>
+            </div>
+          `;
+        }
+      }, 1500);
+    }
+
+    function loadQuizQuestion(index) {
+      const q = quizQuestions[index];
+      document.getElementById('quiz-progress').textContent = `Question ${index + 1} of ${quizQuestions.length}`;
+      document.getElementById('quiz-question').textContent = q.q;
+      document.getElementById('quiz-question-kn').textContent = q.qKn;
+      document.getElementById('quiz-explanation').classList.add('hidden');
+
+      const optContainer = document.getElementById('quiz-options');
+      optContainer.innerHTML = '';
+      q.options.forEach(opt => {
+        const b = document.createElement('button');
+        b.className = 'p-3 rounded-xl bg-[#141221] hover:bg-purple-900/50 border border-purple-900 text-left text-white font-medium transition-all';
+        b.textContent = opt.text;
+        b.onclick = () => handleQuizAnswer(opt.correct, b);
+        optContainer.appendChild(b);
+      });
+    }
+
+    // --- 8. AI FLEET & ROUTE OPTIMIZER (CERTIFIED COLLECTORS) ---
+    function optimizeCollectorRouteAi() {
+      const banner = document.getElementById('ai-route-banner');
+      const btn = document.getElementById('btn-route-opt');
+      if (btn) btn.textContent = 'Optimizing with Gemini Fleet...';
+
+      setTimeout(() => {
+        if (banner) banner.classList.remove('hidden');
+        if (btn) btn.textContent = '✨ Route Optimized (-34% Fuel)';
+        alert(`✨ Gemini Fleet Optimizer Applied!\n\nStops re-sequenced for optimal EV navigation:\n1. Stop 1: Indiranagar (0.8 km, 6 mins)\n2. Stop 2: Domlur 2nd Stage (1.4 km, 11 mins)\n3. Stop 3: Koramangala 4th Block (3.1 km, 18 mins)\n\nBattery saved: 34% • Drive time saved: 45 mins • CO₂ avoided: 3.8 kg!`);
+      }, 800);
+    }
+
+    function generateAiEsgReport() {
+      alert(`✨ PunarChakra AI ESG Report Generated!\n\n• Company: Infosys Eco Park\n• Recycled Tonnage: 15.4 Metric Tons (MT)\n• Carbon Abatement: 42.6 Metric Tons CO₂ Equivalent\n• Landfill Diversion Rate: 99.4%\n• Certified Manifest: Form-6 ISO-14001 Compliant\n\nCloud backup automatically logged to Google Drive.`);
+      triggerAutoSaveDrive("B2B ESG Report Creation");
+    }
+
+    // --- 9. DAILY ONLINE SCRAP RATES SYNCHRONIZATION ENGINE ---
+    function syncOnlineRates() {
+      const headerSyncIcon = document.getElementById('sync-icon');
+      if (headerSyncIcon) headerSyncIcon.classList.add('animate-spin');
+
+      setTimeout(() => {
+        const dailyFluctuations = {
+          copper: Math.floor(Math.random() * 15) + 10,
+          brass: Math.floor(Math.random() * 10) + 5,
+          aluminum: Math.floor(Math.random() * 6) + 2,
+          iron: Math.floor(Math.random() * 3) + 1,
+          newspaper: Math.floor(Math.random() * 3) + 1,
+          cardboard: Math.floor(Math.random() * 2) + 1,
+          pet_bottles: Math.floor(Math.random() * 3) + 1,
+          laptop: Math.floor(Math.random() * 30) + 20,
+        };
+
+        scrapItems.forEach(item => {
+          if (dailyFluctuations[item.id]) {
+            const delta = dailyFluctuations[item.id];
+            item.rate += delta;
+            item.surge = `▲ +₹${delta} (Synced)`;
+          }
+        });
+
+        const copperItem = scrapItems.find(i => i.id === 'copper');
+        if (copperItem) {
+          document.getElementById('tk-copper').textContent = `₹${copperItem.rate}/kg`;
+          document.getElementById('tk-copper-diff').textContent = copperItem.surge;
+        }
+        const newsItem = scrapItems.find(i => i.id === 'newspaper');
+        if (newsItem) {
+          document.getElementById('tk-newspaper').textContent = `₹${newsItem.rate}/kg`;
+          document.getElementById('tk-newspaper-diff').textContent = newsItem.surge;
+        }
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('header-sync-label').textContent = `Online Mandi: Synced Today ${timeStr}`;
+
+        if (headerSyncIcon) headerSyncIcon.classList.remove('animate-spin');
+
+        renderScrapCatalog();
+        renderAdminTables();
+        recalculateCart();
+        triggerAutoSaveDrive("Daily Online Scrap Rates Sync");
+
+        alert(`✅ Daily Online Scrap Rates Synced!\n\nSource: Indian Commodity Exchange & Mandi Spot Index\n• Heavy Copper: ₹${copperItem.rate}/kg\n• Old Newspaper: ₹${newsItem.rate}/kg\n• Certified Digital Scales & Customer Carts refreshed!\n• Synced to Google Drive folder 'PunarChakra-Backups'.`);
+      }, 600);
+    }
+
+    // --- 10. FLOATING WHATSAPP LIVE CHAT CONTROLS ---
+    function toggleWhatsApp() {
+      const drawer = document.getElementById('whatsapp-drawer');
+      drawer.classList.toggle('hidden');
+      drawer.classList.toggle('flex');
+    }
+
+    function sendQuickWhatsApp(promptText) {
+      appendWhatsAppMsg(promptText, 'user');
+      setTimeout(() => {
+        let reply = "Thank you for reaching out to PunarChakra Support! Connecting you with our nearest Bengaluru dispatch coordinator...";
+        const lower = promptText.toLowerCase();
+        if (lower.includes('rate')) {
+          reply = `Today's live online scrap rates (Synced from MCX Mandi): Heavy Copper: ₹${scrapItems.find(i=>i.id==='copper').rate}/kg, Brass: ₹${scrapItems.find(i=>i.id==='brass').rate}/kg, Newspaper: ₹${scrapItems.find(i=>i.id==='newspaper').rate}/kg. Certified digital weighing guaranteed!`;
+        } else if (lower.includes('order') || lower.includes('pc-2026-8801')) {
+          reply = "Your pickup #PC-2026-8801 is EN ROUTE! Driver Manjunath Gowda (KA-01-EV-4820) is 6 minutes away in Indiranagar. Arrival OTP: 4820.";
+        } else if (lower.includes('bulk') || lower.includes('b2b') || lower.includes('factory')) {
+          reply = "Our Industrial Division handles multi-ton scrap clearance with ISO-compliant disposal and Form-6 ESG recycling certificates. A B2B manager is assigned!";
+        }
+        appendWhatsAppMsg(reply, 'bot');
+      }, 500);
+    }
+
+    function handleSendWhatsApp(e) {
+      e.preventDefault();
+      const input = document.getElementById('wa-input-msg');
+      const text = input.value.trim();
+      if (!text) return;
+      appendWhatsAppMsg(text, 'user');
+      input.value = '';
+
+      setTimeout(() => {
+        let reply = `Thank you! We received: "${text}". Our live coordinator is available via WhatsApp Web/App as well.`;
+        appendWhatsAppMsg(reply, 'bot');
+      }, 500);
+    }
+
+    function appendWhatsAppMsg(text, sender) {
+      const thread = document.getElementById('wa-chat-thread');
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const msgDiv = document.createElement('div');
+      
+      if (sender === 'user') {
+        msgDiv.className = 'flex items-start justify-end gap-2';
+        msgDiv.innerHTML = `
+          <div class="bg-[#005c4b] text-white p-3 rounded-2xl rounded-tr-xs max-w-[85%] border border-emerald-700/60">
+            <p>${text}</p>
+            <span class="text-[9px] text-emerald-200/80 block mt-1 text-right font-mono">${now}</span>
+          </div>
+        `;
+      } else {
+        msgDiv.className = 'flex items-start gap-2';
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-[#25D366] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            💬
+          </div>
+          <div class="bg-[#122b1f] text-slate-100 p-3 rounded-2xl rounded-tl-xs max-w-[85%] border border-emerald-800/40">
+            <p>${text}</p>
+            <span class="text-[9px] text-emerald-400/80 block mt-1 text-right font-mono">${now}</span>
+          </div>
+        `;
+      }
+      thread.appendChild(msgDiv);
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    // --- 11. PORTAL SWITCHING & AUTH ---
+    function setPortalView(portal) {
+      document.querySelectorAll('.portal-pane').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById(`portal-${portal}`);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.portal-nav-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'shadow');
+        btn.classList.add('text-emerald-300');
+      });
+      const activeBtn = document.getElementById(`tab-nav-${portal}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-emerald-300');
+        activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow');
+      }
+
+      if (portal === 'admin') {
+        renderAdminTables();
+      } else if (portal === 'business') {
+        renderB2BTable();
+      }
+    }
+
+    function openLoginGateway() {
+      document.getElementById('modal-login-gateway').classList.remove('hidden');
+    }
+    function closeLoginGateway() {
+      document.getElementById('modal-login-gateway').classList.add('hidden');
+    }
+
+    function performRoleLogin(role) {
+      closeLoginGateway();
+      setPortalView(role);
+      const roleTitles = {
+        customer: 'Individual Citizen',
+        business: 'B2B Enterprise',
+        executive: 'Verified Collector Driver',
+        admin: 'Operations Master Admin'
+      };
+      alert(`✅ Authenticated into ${roleTitles[role]} Portal!`);
+    }
+
+    // --- 12. SCRAP CATALOG & CART ---
+    function renderScrapCatalog() {
+      const grid = document.getElementById('scrap-grid');
+      grid.innerHTML = '';
+
+      scrapItems.forEach(item => {
+        const displayName = (currentLang === 'kn') ? item.nameKn : item.name;
+        const currentQty = cart[item.id] || 0;
+
+        const card = document.createElement('div');
+        card.className = 'scrap-card bg-[#11261d] border border-emerald-800/40 hover:border-emerald-500/60 rounded-2xl p-4 transition-all hover:shadow-lg';
+        card.setAttribute('data-category', item.cat);
+        card.setAttribute('data-name', `${item.name.toLowerCase()} ${item.nameKn.toLowerCase()}`);
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-3xl">${item.icon}</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">${item.surge || item.cat}</span>
+          </div>
+          <h4 class="font-bold text-white text-base">${displayName}</h4>
+          <p class="text-[11px] text-slate-400 mb-3">${item.desc}</p>
+          <div class="flex items-baseline justify-between pt-2 border-t border-emerald-900/50 mb-3">
+            <div>
+              <span class="text-xl font-black text-emerald-400">₹${item.rate}</span>
+              <span class="text-xs text-slate-400"> / ${item.unit}</span>
+            </div>
+            <span class="text-[11px] text-emerald-300 font-semibold">CO₂: ${item.co2}kg</span>
+          </div>
+          <div class="flex items-center justify-between bg-[#0a1812] p-1.5 rounded-xl border border-emerald-900/60">
+            <span class="text-xs text-slate-400 pl-2">Est:</span>
+            <div class="flex items-center gap-2">
+              <button onclick="updateCartQty('${item.id}', -${item.unit === 'pc' ? 1 : (item.id === 'copper' ? 1 : 5)})" class="w-7 h-7 rounded-lg bg-emerald-950 text-emerald-400 font-bold hover:bg-emerald-900">-</button>
+              <span id="qty-${item.id}" class="text-xs font-black text-white w-10 text-center">${currentQty} ${item.unit}</span>
+              <button onclick="updateCartQty('${item.id}', ${item.unit === 'pc' ? 1 : (item.id === 'copper' ? 1 : 5)})" class="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-500">+</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      recalculateCart();
+    }
+
+    function updateCartQty(id, delta) {
+      cart[id] = Math.max(0, (cart[id] || 0) + delta);
+      const item = scrapItems.find(i => i.id === id);
+      const unit = item ? item.unit : 'kg';
+      const el = document.getElementById(`qty-${id}`);
+      if (el) el.textContent = `${cart[id]} ${unit}`;
+      recalculateCart();
+    }
+
+    function recalculateCart() {
+      let total = 0;
+      let count = 0;
+      for (const [id, qty] of Object.entries(cart)) {
+        if (qty > 0) {
+          const item = scrapItems.find(i => i.id === id);
+          if (item) total += qty * item.rate;
+          count++;
+        }
+      }
+      document.getElementById('cart-total-value').textContent = `₹${total.toLocaleString('en-IN')}`;
+      document.getElementById('cart-badge').textContent = count;
+    }
+
+    function setCategoryFilter(category) {
+      document.querySelectorAll('.cat-pill').forEach(b => {
+        b.classList.remove('bg-emerald-600', 'text-white');
+        b.classList.add('bg-[#132c21]', 'text-emerald-300');
+      });
+      event.target.classList.remove('bg-[#132c21]', 'text-emerald-300');
+      event.target.classList.add('bg-emerald-600', 'text-white');
+
+      document.querySelectorAll('.scrap-card').forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function filterScrapItems() {
+      const q = document.getElementById('scrap-search').value.toLowerCase();
+      document.querySelectorAll('.scrap-card').forEach(card => {
+        const text = card.getAttribute('data-name');
+        card.classList.toggle('hidden', !text.includes(q));
+      });
+    }
+
+    // --- 13. ADMIN CRUD ENGINE (AUTO-SYNCED TO GOOGLE DRIVE) ---
+    function setAdminTab(tab) {
+      document.querySelectorAll('.admin-section').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-600', 'text-white', 'bg-blue-600');
+        btn.classList.add('text-purple-300');
+      });
+
+      document.getElementById(`admin-sec-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`atab-${tab}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-purple-300', 'text-blue-300');
+        activeBtn.classList.add(tab === 'drive' ? 'bg-blue-600' : 'bg-purple-600', 'text-white');
+      }
+
+      renderAdminTables();
+      if (tab === 'drive') {
+        renderDriveModalList();
+      }
+    }
+
+    function renderAdminTables() {
+      // 1. Individuals Table
+      const indTbody = document.getElementById('admin-table-individuals');
+      if (indTbody) {
+        indTbody.innerHTML = '';
+        individualsData.forEach(ind => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-purple-950/30 transition-colors';
+          tr.innerHTML = `
+            <td class="p-3 font-mono text-purple-300 font-bold">${ind.id}</td>
+            <td class="p-3 font-bold text-white">${ind.name}</td>
+            <td class="p-3">${ind.phone}</td>
+            <td class="p-3">${ind.area}</td>
+            <td class="p-3 font-bold text-emerald-400">₹${ind.wallet}</td>
+            <td class="p-3">${ind.totalSold}</td>
+            <td class="p-3 text-right space-x-2">
+              <button onclick="editIndividual('${ind.id}')" class="px-2 py-1 rounded bg-purple-800 hover:bg-purple-700 text-white text-[11px] font-bold">Edit</button>
+              <button onclick="deleteIndividual('${ind.id}')" class="px-2 py-1 rounded bg-rose-900 hover:bg-rose-800 text-rose-200 text-[11px] font-bold">Delete</button>
+            </td>
+          `;
+          indTbody.appendChild(tr);
+        });
+      }
+
+      // 2. B2B Table
+      const b2bTbody = document.getElementById('admin-table-b2b');
+      if (b2bTbody) {
+        b2bTbody.innerHTML = '';
+        b2bData.forEach(b => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-amber-950/30 transition-colors';
+          tr.innerHTML = `
+            <td class="p-3 font-bold text-white">${b.name}</td>
+            <td class="p-3 font-mono text-amber-300">${b.gstin}</td>
+            <td class="p-3">${b.email}</td>
+            <td class="p-3 font-bold text-amber-400">${b.volume}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">${b.tier}</span></td>
+            <td class="p-3 text-right space-x-2">
+              <button onclick="editB2B('${b.id}')" class="px-2 py-1 rounded bg-amber-800 hover:bg-amber-700 text-white text-[11px] font-bold">Edit</button>
+              <button onclick="deleteB2B('${b.id}')" class="px-2 py-1 rounded bg-rose-900 hover:bg-rose-800 text-rose-200 text-[11px] font-bold">Delete</button>
+            </td>
+          `;
+          b2bTbody.appendChild(tr);
+        });
+      }
+
+      // 3. Collectors Table
+      const colTbody = document.getElementById('admin-table-collectors');
+      if (colTbody) {
+        colTbody.innerHTML = '';
+        collectorsData.forEach(c => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-sky-950/30 transition-colors';
+          tr.innerHTML = `
+            <td class="p-3 font-mono text-sky-300 font-bold">${c.id}</td>
+            <td class="p-3 font-bold text-white">${c.name}</td>
+            <td class="p-3">${c.phone}</td>
+            <td class="p-3 font-mono text-emerald-400 font-bold">${c.veh}</td>
+            <td class="p-3">${c.zone}</td>
+            <td class="p-3 text-amber-400 font-bold">${c.rating}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 text-[10px] font-bold">${c.status}</span></td>
+            <td class="p-3 text-right space-x-2">
+              <button onclick="editCollector('${c.id}')" class="px-2 py-1 rounded bg-sky-800 hover:bg-sky-700 text-white text-[11px] font-bold">Edit</button>
+              <button onclick="deleteCollector('${c.id}')" class="px-2 py-1 rounded bg-rose-900 hover:bg-rose-800 text-rose-200 text-[11px] font-bold">Delete</button>
+            </td>
+          `;
+          colTbody.appendChild(tr);
+        });
+      }
+
+      // 4. Rates Grid
+      const ratesGrid = document.getElementById('admin-rates-grid');
+      if (ratesGrid) {
+        ratesGrid.innerHTML = '';
+        scrapItems.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'p-3 bg-[#0d0914] rounded-xl border border-purple-900/60 flex items-center justify-between text-xs';
+          div.innerHTML = `
+            <div>
+              <div class="font-bold text-white">${item.name}</div>
+              <div class="text-slate-400">${item.nameKn} (${item.cat})</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">₹</span>
+              <input type="number" id="adm-rate-${item.id}" value="${item.rate}" onchange="updateScrapRate('${item.id}', this.value)" 
+                class="w-16 bg-purple-950/60 border border-purple-700 rounded px-2 py-1 text-white text-right font-mono font-bold">
+              <button onclick="deleteScrapItem('${item.id}')" class="text-rose-400 hover:text-rose-200 text-xs ml-1" title="Delete Scrap Item">✕</button>
+            </div>
+          `;
+          ratesGrid.appendChild(div);
+        });
+      }
+    }
+
+    // --- INDIVIDUALS CRUD ---
+    function openAddIndividualModal() {
+      document.getElementById('modal-ind-title').textContent = 'Add New Individual Citizen';
+      document.getElementById('form-ind-id').value = '';
+      document.getElementById('form-ind-name').value = '';
+      document.getElementById('form-ind-phone').value = '';
+      document.getElementById('form-ind-area').value = '';
+      document.getElementById('form-ind-wallet').value = '500';
+      document.getElementById('modal-individual').classList.remove('hidden');
+    }
+
+    function editIndividual(id) {
+      const ind = individualsData.find(i => i.id === id);
+      if (!ind) return;
+      document.getElementById('modal-ind-title').textContent = `Edit Individual: ${ind.name}`;
+      document.getElementById('form-ind-id').value = ind.id;
+      document.getElementById('form-ind-name').value = ind.name;
+      document.getElementById('form-ind-phone').value = ind.phone;
+      document.getElementById('form-ind-area').value = ind.area;
+      document.getElementById('form-ind-wallet').value = ind.wallet;
+      document.getElementById('modal-individual').classList.remove('hidden');
+    }
+
+    function saveIndividualCustomer() {
+      const id = document.getElementById('form-ind-id').value;
+      const name = document.getElementById('form-ind-name').value.trim();
+      const phone = document.getElementById('form-ind-phone').value.trim();
+      const area = document.getElementById('form-ind-area').value.trim();
+      const wallet = Number(document.getElementById('form-ind-wallet').value) || 0;
+
+      if (!name || !phone) {
+        alert('Please provide name and phone number.');
+        return;
+      }
+
+      if (id) {
+        const ind = individualsData.find(i => i.id === id);
+        if (ind) {
+          ind.name = name;
+          ind.phone = phone;
+          ind.area = area;
+          ind.wallet = wallet;
+        }
+      } else {
+        const newId = `usr_${Date.now().toString().slice(-4)}`;
+        individualsData.unshift({ id: newId, name, phone, area, wallet, totalSold: '0 kg' });
+      }
+
+      closeModal('modal-individual');
+      renderAdminTables();
+      triggerAutoSaveDrive(`Save Individual '${name}'`);
+      alert(`Success! Individual "${name}" saved and persisted to Google Drive.`);
+    }
+
+    function deleteIndividual(id) {
+      if (confirm(`Are you sure you want to delete Individual account #${id}?`)) {
+        individualsData = individualsData.filter(i => i.id !== id);
+        renderAdminTables();
+        triggerAutoSaveDrive(`Delete Individual #${id}`);
+      }
+    }
+
+    // --- B2B CRUD ---
+    function openAddB2BModal() {
+      document.getElementById('modal-b2b-title').textContent = 'Add B2B Corporate Enterprise';
+      document.getElementById('form-b2b-id').value = '';
+      document.getElementById('form-b2b-name').value = '';
+      document.getElementById('form-b2b-gstin').value = '';
+      document.getElementById('form-b2b-email').value = '';
+      document.getElementById('form-b2b-vol').value = '20 MT / Month';
+      document.getElementById('modal-b2b').classList.remove('hidden');
+    }
+
+    function editB2B(id) {
+      const b = b2bData.find(item => item.id === id);
+      if (!b) return;
+      document.getElementById('modal-b2b-title').textContent = `Edit B2B: ${b.name}`;
+      document.getElementById('form-b2b-id').value = b.id;
+      document.getElementById('form-b2b-name').value = b.name;
+      document.getElementById('form-b2b-gstin').value = b.gstin;
+      document.getElementById('form-b2b-email').value = b.email;
+      document.getElementById('form-b2b-vol').value = b.volume;
+      document.getElementById('modal-b2b').classList.remove('hidden');
+    }
+
+    function saveB2BEnterprise() {
+      const id = document.getElementById('form-b2b-id').value;
+      const name = document.getElementById('form-b2b-name').value.trim();
+      const gstin = document.getElementById('form-b2b-gstin').value.trim();
+      const email = document.getElementById('form-b2b-email').value.trim();
+      const volume = document.getElementById('form-b2b-vol').value.trim();
+
+      if (!name || !gstin) {
+        alert('Please provide enterprise name and GSTIN.');
+        return;
+      }
+
+      if (id) {
+        const b = b2bData.find(item => item.id === id);
+        if (b) {
+          b.name = name;
+          b.gstin = gstin;
+          b.email = email;
+          b.volume = volume;
+        }
+      } else {
+        const newId = `biz_${Date.now().toString().slice(-4)}`;
+        b2bData.unshift({ id: newId, name, gstin, email, volume, tier: 'Tier-1 Enterprise' });
+      }
+
+      closeModal('modal-b2b');
+      renderAdminTables();
+      renderB2BTable();
+      triggerAutoSaveDrive(`Save B2B '${name}'`);
+      alert(`Success! Enterprise "${name}" saved and persisted to Google Drive.`);
+    }
+
+    function deleteB2B(id) {
+      if (confirm(`Are you sure you want to remove Enterprise account #${id}?`)) {
+        b2bData = b2bData.filter(i => i.id !== id);
+        renderAdminTables();
+        renderB2BTable();
+        triggerAutoSaveDrive(`Delete B2B #${id}`);
+      }
+    }
+
+    function renderB2BTable() {
+      const container = document.getElementById('b2b-client-table');
+      if (!container) return;
+      let html = `
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-[#11130d] text-amber-300 uppercase font-black border-b border-amber-900/60">
+            <tr>
+              <th class="p-3">Enterprise / Factory</th>
+              <th class="p-3">GSTIN</th>
+              <th class="p-3">Tonnage Agreement</th>
+              <th class="p-3">Compliance Tier</th>
+              <th class="p-3 text-right">Certificate</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-amber-950/60">
+      `;
+      b2bData.forEach(b => {
+        html += `
+          <tr class="hover:bg-amber-950/30">
+            <td class="p-3 font-bold text-white">${b.name}</td>
+            <td class="p-3 font-mono text-amber-400">${b.gstin}</td>
+            <td class="p-3">${b.volume}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${b.tier}</span></td>
+            <td class="p-3 text-right">
+              <button onclick="alert('Generated Form-6 ESG Certificate for ${b.name}')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-black">
+                📄 ESG PDF
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    // --- COLLECTORS CRUD ---
+    function openAddCollectorModal() {
+      document.getElementById('modal-col-title').textContent = 'Add Verified Fleet Collector';
+      document.getElementById('form-col-id').value = '';
+      document.getElementById('form-col-name').value = '';
+      document.getElementById('form-col-phone').value = '';
+      document.getElementById('form-col-veh').value = 'KA-01-EV-';
+      document.getElementById('form-col-zone').value = 'Indiranagar Cluster';
+      document.getElementById('modal-collector').classList.remove('hidden');
+    }
+
+    function editCollector(id) {
+      const c = collectorsData.find(item => item.id === id);
+      if (!c) return;
+      document.getElementById('modal-col-title').textContent = `Edit Collector: ${c.name}`;
+      document.getElementById('form-col-id').value = c.id;
+      document.getElementById('form-col-name').value = c.name;
+      document.getElementById('form-col-phone').value = c.phone;
+      document.getElementById('form-col-veh').value = c.veh;
+      document.getElementById('form-col-zone').value = c.zone;
+      document.getElementById('modal-collector').classList.remove('hidden');
+    }
+
+    function saveCollectorDriver() {
+      const id = document.getElementById('form-col-id').value;
+      const name = document.getElementById('form-col-name').value.trim();
+      const phone = document.getElementById('form-col-phone').value.trim();
+      const veh = document.getElementById('form-col-veh').value.trim();
+      const zone = document.getElementById('form-col-zone').value.trim();
+
+      if (!name || !veh) {
+        alert('Please provide collector name and EV vehicle number.');
+        return;
+      }
+
+      if (id) {
+        const c = collectorsData.find(item => item.id === id);
+        if (c) {
+          c.name = name;
+          c.phone = phone;
+          c.veh = veh;
+          c.zone = zone;
+        }
+      } else {
+        const newId = `col_${Date.now().toString().slice(-4)}`;
+        collectorsData.unshift({ id: newId, name, phone, veh, zone, rating: '★ 5.0 (New)', status: 'Available' });
+      }
+
+      closeModal('modal-collector');
+      renderAdminTables();
+      triggerAutoSaveDrive(`Save Collector '${name}'`);
+      alert(`Success! Verified Collector "${name}" (${veh}) saved and persisted to Google Drive.`);
+    }
+
+    function deleteCollector(id) {
+      if (confirm(`Are you sure you want to offboard Collector #${id}?`)) {
+        collectorsData = collectorsData.filter(i => i.id !== id);
+        renderAdminTables();
+        triggerAutoSaveDrive(`Delete Collector #${id}`);
+      }
+    }
+
+    // --- SCRAP RATES CRUD ---
+    function updateScrapRate(id, newRate) {
+      const item = scrapItems.find(i => i.id === id);
+      if (item) {
+        item.rate = Number(newRate) || item.rate;
+        renderScrapCatalog();
+        triggerAutoSaveDrive(`Rate Update '${item.name}'`);
+        alert(`Rate for "${item.name}" updated to ₹${item.rate}/${item.unit} and saved to Google Drive!`);
+      }
+    }
+
+    function openAddScrapItemModal() {
+      document.getElementById('modal-scrap').classList.remove('hidden');
+    }
+
+    function saveScrapItem() {
+      const name = document.getElementById('form-scrap-name').value.trim();
+      const nameKn = document.getElementById('form-scrap-name-kn').value.trim() || name;
+      const cat = document.getElementById('form-scrap-cat').value;
+      const rate = Number(document.getElementById('form-scrap-rate').value) || 50;
+      const unit = document.getElementById('form-scrap-unit').value;
+
+      if (!name) {
+        alert('Please enter material name.');
+        return;
+      }
+
+      const id = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      scrapItems.push({
+        id,
+        name,
+        nameKn,
+        cat,
+        rate,
+        unit,
+        icon: '♻️',
+        desc: 'Recyclable scrap item',
+        co2: 2.0,
+        surge: 'New'
+      });
+
+      closeModal('modal-scrap');
+      renderScrapCatalog();
+      renderAdminTables();
+      triggerAutoSaveDrive(`Add Scrap Material '${name}'`);
+      alert(`Added new scrap material "${name}" (₹${rate}/${unit}) and synced to Google Drive!`);
+    }
+
+    function deleteScrapItem(id) {
+      if (confirm(`Delete scrap item "${id}" from public catalog?`)) {
+        scrapItems = scrapItems.filter(i => i.id !== id);
+        renderScrapCatalog();
+        renderAdminTables();
+        triggerAutoSaveDrive(`Delete Scrap Item '${id}'`);
+      }
+    }
+
+    // --- GENERAL MODALS & ACTIONS ---
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+    function openAiModal() { 
+      document.getElementById('modal-ai').classList.remove('hidden'); 
+      runAiScanWithSample('copper');
+    }
+    function openBookingModal() { document.getElementById('modal-booking').classList.remove('hidden'); }
+    function openGpsModal() { document.getElementById('modal-gps').classList.remove('hidden'); }
+    function openVoiceModal() { document.getElementById('modal-voice').classList.remove('hidden'); }
+    function openAiPrepModal() { 
+      document.getElementById('modal-ai-prep').classList.remove('hidden'); 
+      showPrepDetails('copper');
+    }
+    function openEcoQuizModal() { 
+      document.getElementById('modal-eco-quiz').classList.remove('hidden'); 
+      quizCurrentIndex = 0;
+      quizTotalScore = 0;
+      loadQuizQuestion(0);
+    }
+    function openB2BAuditModal() { openAddB2BModal(); }
+
+    function confirmBooking() {
+      closeModal('modal-booking');
+      openGpsModal();
+      triggerAutoSaveDrive("Schedule New Doorstep Pickup");
+      alert('✅ Doorstep pickup confirmed! Verified collector Manjunath Gowda (KA-01-EV-4820) dispatched.');
+    }
+
+    function completeOrderPayout(ordId, amt) {
+      triggerAutoSaveDrive(`Order Payout Completed #${ordId}`);
+      alert(`🎉 Digital scale verified gross weight! Direct UPI payout of ₹${amt} transferred to citizen account for Order #${ordId}.`);
+    }
+
+    function exportDataJson() {
+      const backup = {
+        app: "PunarChakra",
+        persistenceTarget: "Google Drive / PunarChakra-Backups",
+        timestamp: new Date().toISOString(),
+        individuals: individualsData,
+        b2b: b2bData,
+        collectors: collectorsData,
+        rates: scrapItems
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `PunarChakra_Master_Backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      triggerAutoSaveDrive("Manual JSON Backup Export");
+    }
+
+    // --- INITIALIZE ON LOAD ---
+    renderScrapCatalog();
+    renderAdminTables();
+    renderDriveModalList();
+  </script>
+</body>
+</html>
